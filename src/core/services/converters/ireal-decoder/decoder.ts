@@ -1,11 +1,11 @@
 import diff from "fast-diff";
-import type { ExerciceConfigDTO } from "../../../types/data";
+import type { ExerciceConfigDTO } from "../../../types/config";
 import { DEFAULT_EXERCICE_CONFIG } from "../../../settings/defaultExercice";
 
 type Diff = [-1 | 0 | 1, string];
 
 export class Playlist {
-  name: string = "My playlist";
+  title: string = "My playlist";
   songs: Song[];
 
   constructor(ireal: string) {
@@ -19,7 +19,7 @@ export class Playlist {
     const playlist = decodeURIComponent(playlistEncoded[2]);
     const parts = playlist.split("===");
     if (parts.length > 1) {
-      typeof parts.at(-1) === "string" && (this.name = parts.pop()!);
+      typeof parts.at(-1) === "string" && (this.title = parts.pop()!);
     }
 
     this.songs = parts

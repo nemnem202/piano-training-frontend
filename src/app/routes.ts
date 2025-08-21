@@ -1,4 +1,3 @@
-import type { Route } from "../core/types/routes";
 import { Exercice } from "../pages/exercice/exercice";
 import { Home } from "../pages/home/home";
 import { Create } from "../pages/create/create";
@@ -8,6 +7,7 @@ import { PlaylistPreview } from "../pages/playlistPreview/playlistPreview";
 import checkPlaylistId from "../core/guards/checkPlaylistTitle";
 import { PlaylistPage } from "../pages/playlist/playlist";
 import checkSongTitle from "../core/guards/checkSongTitle";
+import type { Route } from "../core/types/routes";
 
 const ROUTES: Route[] = [
   { path: "not-found", page: () => new NotFound(), header: true, footer: true },

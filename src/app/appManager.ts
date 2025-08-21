@@ -35,12 +35,14 @@ export class AppManager {
   }
 
   public setCurrentPage(route: Route, params: Record<string, string>) {
+    if (!route.page) return;
     this.currentPage = route.page(params);
 
     this.handleHeaderAndFooter(route);
 
     this.app.innerHTML = "";
-    this.app.appendChild(this.currentPage.content);
+
+    if (this.currentPage) this.app.appendChild(this.currentPage.content);
   }
 
   private handleHeaderAndFooter(route: Route) {

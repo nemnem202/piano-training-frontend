@@ -1,5 +1,6 @@
+import type { DBTypes } from "../../types/data";
+import type { PlaylistDTO } from "../../types/playlist";
 import type { Playlist } from "../converters/ireal-decoder/decoder";
-import type { DBTypes, PlaylistDTO } from "../../types/data";
 import { openDB, type IDBPDatabase } from "idb";
 
 export class PlaylistDAO {
@@ -26,7 +27,7 @@ export class PlaylistDAO {
 
     // Étape 1 : ajoute l'objet sans id, IndexedDB génère le newId
     const id = await db.add("playlists", {
-      title: playlist.name || "",
+      title: playlist.title || "",
       songs: playlist.songs,
     });
 
@@ -45,7 +46,7 @@ export class PlaylistDAO {
 
   public static async update(playlist: Playlist): Promise<string> {
     const playlistDto: PlaylistDTO = {
-      title: playlist.name || "",
+      title: playlist.title || "",
       songs: playlist.songs,
     };
     const db = await PlaylistDAO.getDB();

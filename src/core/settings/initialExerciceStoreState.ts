@@ -1,4 +1,4 @@
-import type { ExerciceStoreState } from "../types/exerciceStoreState";
+import type { ExerciceStoreState } from "../types/exercice";
 
 export const initialExerciceStoreState: ExerciceStoreState = {
   chords: [],

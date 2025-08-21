@@ -1,5 +1,5 @@
 import { PlaylistDAO } from "../services/data/playlistDAO";
-import type { PlaylistDTO } from "../types/data";
+import type { PlaylistDTO } from "../types/playlist";
 
 const checkPlaylistTitle = async (
   params: Record<string, string>

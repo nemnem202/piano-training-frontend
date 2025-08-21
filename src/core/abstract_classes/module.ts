@@ -1,5 +1,5 @@
 import type { Exercice } from "../../pages/exercice/exercice";
-import type { Bounds, Corner, Edge, Position } from "../types/modules_types";
+import type { Bounds, Corner, Edge, Position } from "../types/modules";
 import { Component } from "./component";
 
 const RESIZE_TOLERANCE = 10;
@@ -7,7 +7,7 @@ const CLOSE_BUTTON_WIDTH = 50;
 const WINDOW_BAR_HEIGHT = 30;
 
 export abstract class Module extends Component {
-  public square: Bounds = { height: 0, width: 0, x: 0, y: 0 };
+  public bounds: Bounds = { height: 0, width: 0, x: 0, y: 0 };
   public container: Exercice | undefined;
   public offset: Position = { x: 0, y: 0 };
 
@@ -15,9 +15,9 @@ export abstract class Module extends Component {
   private resizeStrategy: ResizeStrategy = new FreeResizeStrategy();
   private windowBar: HTMLDivElement;
 
-  constructor(square: Bounds) {
+  constructor(bounds: Bounds) {
     super("div", "");
-    this.square = square;
+    this.bounds = bounds;
     this.windowBar = document.createElement("div");
   }
 
@@ -30,8 +30,8 @@ export abstract class Module extends Component {
     this.updateMagnetismStrategies();
     this.initStyles();
     this.listenEvents();
-    this.setPosition(this.square.x, this.square.y);
-    this.resize(this.square.width, this.square.height);
+    this.setPosition(this.bounds.x, this.bounds.y);
+    this.resize(this.bounds.width, this.bounds.height);
     this.initWindowBar();
     this.handleWindowClick();
   }
@@ -100,22 +100,22 @@ export abstract class Module extends Component {
 
   setPosition(x: number, y: number) {
     if (!this.container) return;
-    const maxX = this.container.appDimensions.width - this.square.width;
-    const maxY = this.container.appDimensions.height - this.square.height;
+    const maxX = this.container.appDimensions.width - this.bounds.width;
+    const maxY = this.container.appDimensions.height - this.bounds.height;
 
     const clampedX = Math.max(0, Math.min(x, maxX));
     const clampedY = Math.max(0, Math.min(y, maxY));
 
     const { x: finalX, y: finalY } = this.moveStrategy.getPosition(clampedX, clampedY, this);
-    this.square.x = finalX;
-    this.square.y = finalY;
+    this.bounds.x = finalX;
+    this.bounds.y = finalY;
     this.content.style.transform = `translate3d(${finalX}px, ${finalY}px, 0)`;
   }
 
   resize(width: number, height: number) {
     const { width: finalW, height: finalH } = this.resizeStrategy.getSize(width, height, this);
-    this.square.width = finalW;
-    this.square.height = finalH;
+    this.bounds.width = finalW;
+    this.bounds.height = finalH;
     this.content.style.width = `${finalW}px`;
     this.content.style.height = `${finalH}px`;
   }
@@ -125,7 +125,7 @@ export abstract class Module extends Component {
     e.stopPropagation();
     this.bringToFront();
     this.container.changeDraggedModule(this);
-    this.offset = { x: e.clientX - this.square.x, y: e.clientY - this.square.y };
+    this.offset = { x: e.clientX - this.bounds.x, y: e.clientY - this.bounds.y };
   }
 
   private handleCloseButtonHit(e: MouseEvent) {
@@ -158,21 +158,21 @@ export abstract class Module extends Component {
 
   public isPointInMoveZone(x: number, y: number): boolean {
     const isInRangeX =
-      x >= this.square.x && x <= this.square.width + this.square.x - CLOSE_BUTTON_WIDTH;
-    const isInRangeY = y >= this.square.y && y <= this.square.y + WINDOW_BAR_HEIGHT;
+      x >= this.bounds.x && x <= this.bounds.width + this.bounds.x - CLOSE_BUTTON_WIDTH;
+    const isInRangeY = y >= this.bounds.y && y <= this.bounds.y + WINDOW_BAR_HEIGHT;
 
     return isInRangeX && isInRangeY;
   }
 
   public getResizeHandleAtPoint(x: number, y: number): Edge | Corner | null {
-    const topMin = this.square.y - RESIZE_TOLERANCE;
-    const topMax = this.square.y;
-    const bottomMax = this.square.y + this.square.height + RESIZE_TOLERANCE;
-    const bottomMin = this.square.y + this.square.height;
-    const leftMin = this.square.x - RESIZE_TOLERANCE;
-    const leftMax = this.square.x;
-    const rightMax = this.square.x + this.square.width + RESIZE_TOLERANCE;
-    const rightMin = this.square.x + this.square.width;
+    const topMin = this.bounds.y - RESIZE_TOLERANCE;
+    const topMax = this.bounds.y;
+    const bottomMax = this.bounds.y + this.bounds.height + RESIZE_TOLERANCE;
+    const bottomMin = this.bounds.y + this.bounds.height;
+    const leftMin = this.bounds.x - RESIZE_TOLERANCE;
+    const leftMax = this.bounds.x;
+    const rightMax = this.bounds.x + this.bounds.width + RESIZE_TOLERANCE;
+    const rightMin = this.bounds.x + this.bounds.width;
 
     const topSide = y > topMin && y < topMax;
     const bottomSide = y > bottomMin && y < bottomMax;
@@ -228,11 +228,11 @@ export abstract class Module extends Component {
   public horizontalResize(x: number, edge: Edge) {
     switch (edge) {
       case "left":
-        this.resize(this.square.x + this.square.width - x, this.square.height);
-        this.setPosition(x, this.square.y);
+        this.resize(this.bounds.x + this.bounds.width - x, this.bounds.height);
+        this.setPosition(x, this.bounds.y);
         break;
       case "right":
-        this.resize(x - this.square.x, this.square.height);
+        this.resize(x - this.bounds.x, this.bounds.height);
         break;
     }
   }
@@ -240,11 +240,11 @@ export abstract class Module extends Component {
   public verticalResize(y: number, edge: Edge) {
     switch (edge) {
       case "top":
-        this.resize(this.square.width, this.square.y + this.square.height - y);
-        this.setPosition(this.square.x, y);
+        this.resize(this.bounds.width, this.bounds.y + this.bounds.height - y);
+        this.setPosition(this.bounds.x, y);
         break;
       case "bottom":
-        this.resize(this.square.width, y - this.square.y);
+        this.resize(this.bounds.width, y - this.bounds.y);
     }
   }
 }

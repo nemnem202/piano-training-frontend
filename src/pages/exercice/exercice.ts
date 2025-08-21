@@ -1,8 +1,9 @@
 import type { Module } from "../../core/abstract_classes/module";
 import { Page } from "../../core/abstract_classes/page";
 import { PlaylistDAO } from "../../core/services/data/playlistDAO";
-import { moduleRegistry, type SongDTO } from "../../core/types/data";
-import type { Corner, Dimensions, Edge, ResizeHandle } from "../../core/types/modules_types";
+import { moduleRegistry } from "../../core/settings/moduleRegistry";
+import type { Corner, Dimensions, Edge } from "../../core/types/modules";
+import type { SongDTO } from "../../core/types/playlist";
 import exerciceTemplate from "./exercice.html?raw";
 import "./exerice.css";
 
@@ -64,7 +65,8 @@ export class Exercice extends Page {
     console.log(this.song);
     this.song.exercice.modules.forEach((m) => {
       const ModuleClass = moduleRegistry[m.type];
-      const module = new ModuleClass(m.params.square);
+      console.log(m.params.bounds, m);
+      const module = new ModuleClass(m.params.bounds);
       module.attachContainer(this);
       this.modules.set(this.modules.size, module);
     });
@@ -83,7 +85,7 @@ export class Exercice extends Page {
 
   private adaptModules(ratioX: number, ratioY: number) {
     for (const [, module] of this.modules) {
-      const sq = module.square;
+      const sq = module.bounds;
       module.setPosition(sq.x * ratioX, sq.y * ratioY);
       module.resize(sq.width * ratioX, sq.height * ratioY);
     }
@@ -211,7 +213,7 @@ export class Exercice extends Page {
     this.content.style.cursor = newCursor;
   }
 
-  private getCursorForHandle(handle: ResizeHandle): string {
+  private getCursorForHandle(handle: Corner | Edge): string {
     switch (handle) {
       case "ne":
       case "sw":

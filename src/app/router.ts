@@ -1,4 +1,5 @@
 // router.ts
+
 import type { Route } from "../core/types/routes";
 import { AppManager } from "./appManager";
 
@@ -36,8 +37,6 @@ export class Router {
         return;
       }
     }
-
-    console.log("can enter");
 
     this.updateHistory(splittedPath);
     this.app.setCurrentPage(route, params);
