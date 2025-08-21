@@ -111,8 +111,6 @@ export class Piano extends Module {
     const max = Math.max(...values);
     const mid = Math.round((min + max) / 2);
 
-    console.log(mid);
-
     return mid;
   }
 }
