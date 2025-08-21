@@ -6,4 +6,5 @@ export const initialExerciceStoreState: ExerciceStoreState = {
   beat: 0,
   measure: 0,
   isPlaying: false,
+  notes: [],
 };

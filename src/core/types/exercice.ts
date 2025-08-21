@@ -1,3 +1,4 @@
+import type { noteDTO } from "./config";
 import type { ChordDTO } from "./playlist";
 
 export type ExerciceStoreState = {
@@ -6,4 +7,5 @@ export type ExerciceStoreState = {
   beat: number;
   measure: number;
   isPlaying: boolean;
+  notes: noteDTO[];
 };

@@ -1,6 +1,6 @@
 import type { ModuleDTO } from "./modules";
 
-export type NoteDTO =
+export type AvailableNote =
   | "C"
   | "C#"
   | "D"
@@ -19,9 +19,14 @@ export type NoteDTO =
   | "B"
   | "Bb";
 
+export type noteDTO = {
+  value: number;
+  velocity?: number;
+};
+
 export type ExerciceConfigDTO = {
   bpm: number;
-  key: NoteDTO;
+  key: AvailableNote;
   modules: ModuleDTO[];
   magnetism: boolean;
 };

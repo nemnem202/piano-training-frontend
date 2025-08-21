@@ -1,4 +1,5 @@
 import type { Exercice } from "../../pages/exercice/exercice";
+import type { ExerciceStore } from "../services/stores/exerciceStore";
 import type { Bounds, Corner, Edge, Position } from "../types/modules";
 import { Component } from "./component";
 
@@ -8,6 +9,7 @@ const WINDOW_BAR_HEIGHT = 30;
 
 export abstract class Module extends Component {
   public bounds: Bounds = { height: 0, width: 0, x: 0, y: 0 };
+  protected store: ExerciceStore;
   public container: Exercice | undefined;
   public offset: Position = { x: 0, y: 0 };
 
@@ -15,8 +17,9 @@ export abstract class Module extends Component {
   private resizeStrategy: ResizeStrategy = new FreeResizeStrategy();
   private windowBar: HTMLDivElement;
 
-  constructor(bounds: Bounds) {
+  constructor(bounds: Bounds, store: ExerciceStore) {
     super("div", "");
+    this.store = store;
     this.bounds = bounds;
     this.windowBar = document.createElement("div");
   }
@@ -64,9 +67,13 @@ export abstract class Module extends Component {
   }
 
   private initWindowBar() {
+    this.windowBar.style.position = "absolute";
+    this.windowBar.style.top = "0";
+    this.windowBar.style.width = "100%";
     this.windowBar.style.display = "flex";
     this.windowBar.style.height = `${0}px`;
     this.windowBar.style.display = "none";
+    this.windowBar.style.zIndex = "20";
 
     const moveZone = this.createMoveZone();
     const closeButton = this.createCloseButton();
