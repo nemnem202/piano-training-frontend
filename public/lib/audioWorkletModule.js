@@ -8,8 +8,6 @@ class AudioWorkletModule extends AudioWorkletProcessor {
     this.writeIndex = 0;
     this.availableSamples = 0;
 
-    console.log(this.bufferSize);
-
     this.port.onmessage = (event) => {
       if (event.data.type === "buffer") {
         const data = event.data.buffer;

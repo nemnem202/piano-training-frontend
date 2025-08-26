@@ -1,8 +1,9 @@
+import { generate_buffer } from "./rust-synth/build/rust_synth";
+
 const BUFFER_SIZE = 4096;
 
 export class SoundEngine {
   private static instance: SoundEngine;
-  private static module: any;
   private audioCtx!: AudioContext;
   private workletNode!: AudioWorkletNode;
   private bufferMomentum: number = 0;
@@ -15,9 +16,7 @@ export class SoundEngine {
     return this.instance;
   }
 
-  public async init(module: any) {
-    SoundEngine.module = module;
-
+  public async init() {
     this.audioCtx = new AudioContext({ sampleRate: 44100 });
     await this.audioCtx.resume();
 
@@ -36,12 +35,7 @@ export class SoundEngine {
 
     this.workletNode.port.onmessage = async (event) => {
       if (event.data.type === "buffer-request") {
-        
-        const buffer = new Float32Array(BUFFER_SIZE);
-        for (let i = 0; i < BUFFER_SIZE; i++) {
-          buffer[i] = Math.sin((2 * Math.PI * 440 * i) / this.audioCtx.sampleRate);
-        }
-
+        const buffer = generate_buffer(BUFFER_SIZE);
         this.workletNode.port.postMessage({ type: "buffer", buffer }, [buffer.buffer]);
       }
     };

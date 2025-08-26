@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
+# Rust config
+
+src/core/services/sound/rust-synth/target/
