@@ -4,11 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "watch-wasm": "chokidar \"src/core/services/sound/wasm/synth.cpp\" -c \"cmd /c emcc src/core/services/sound/wasm/synth.cpp -o src/core/services/sound/wasm/build/synth.js -s MODULARIZE -s EXPORT_ES6 --bind -O3\"",
+    "dev": "concurrently \"npm run watch-wasm\" \"vite\"",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
+    "chokidar-cli": "^3.0.0",
+    "concurrently": "^9.2.0",
     "typescript": "~5.8.3",
     "vite": "^7.1.2"
   },

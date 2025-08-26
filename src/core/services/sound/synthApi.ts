@@ -1,10 +1,23 @@
+import { defaultSynthConfig } from "../../settings/synth.js";
 import type { noteDTO } from "../../types/config";
 import type { ExerciceStore } from "../stores/exerciceStore";
+import { SoundEngine } from "./soundEngine.js";
+import createModule from "./wasm/build/synth.js";
 
 export class SynthApi {
   private notes: noteDTO[] = [];
+  static module: any;
+  private soundEngine: SoundEngine;
   constructor(store: ExerciceStore) {
     store.subscribe("notes", () => this.listenStore(store));
+    this.soundEngine = SoundEngine.getInstance();
+    this.initSoundModule();
+  }
+
+  private async initSoundModule() {
+    SynthApi.module = await createModule();
+    SynthApi.module.initSynth(defaultSynthConfig);
+    this.soundEngine.init(SynthApi.module);
   }
 
   private listenStore = (store: ExerciceStore) => {
@@ -24,9 +37,10 @@ export class SynthApi {
   };
 
   static playNote(note: noteDTO) {
-    console.log("play note: ", note);
+    this.module.playNote(note.value);
   }
+
   static stopNote(note: noteDTO) {
-    console.log("stop note", note);
+    this.module.stopNote(note.value);
   }
 }

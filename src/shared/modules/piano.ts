@@ -35,12 +35,12 @@ export class Piano extends Module {
       key.style.boxSizing = "border-box";
       key.style.top = "0";
       key.style.position = "absolute";
+      key.style.border = "1px solid black";
 
       if (WHITE_KEYS.includes(i % 14)) {
         key.style.backgroundColor = "white";
         key.style.height = "100%";
         key.style.zIndex = "4";
-        key.style.border = "1px solid black";
         key.style.width = "50px";
         key.style.left = `${((i - 1) * 50) / 2}px`;
       } else if (BLACK_KEYS.includes(i % 14)) {
@@ -49,7 +49,6 @@ export class Piano extends Module {
         key.style.backgroundColor = "black";
         key.style.height = "50%";
         key.style.zIndex = "5";
-        key.style.border = "1px solid white";
       }
 
       this.keysContainer.appendChild(key);
