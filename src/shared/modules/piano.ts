@@ -59,13 +59,13 @@ export class Piano extends Module {
     window.addEventListener("keydown", (e) => {
       if (KEYS.includes(e.key.toLowerCase())) {
         const index = KEYS.indexOf(e.key.toLowerCase());
-        this.store.addNote({ value: index + 3 * 12 });
+        this.store.addNote({ value: index + 5 * 12 });
       }
     });
     window.addEventListener("keyup", (e) => {
       if (KEYS.includes(e.key.toLowerCase())) {
         const index = KEYS.indexOf(e.key.toLowerCase());
-        this.store.removeNote({ value: index + 3 * 12 });
+        this.store.removeNote({ value: index + 5 * 12 });
       }
     });
   }
