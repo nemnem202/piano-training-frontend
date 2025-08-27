@@ -1,3 +1,5 @@
+import type { Oscillator, SynthConfig } from "./synth";
+
 export type Dimensions = {
   width: number;
   height: number;
@@ -18,5 +20,6 @@ export type ModuleDTO = {
   type: "ChordNames" | "Piano" | "SynthetizerModule";
   params: {
     bounds: Bounds;
+    synthConfig?: SynthConfig;
   };
 };

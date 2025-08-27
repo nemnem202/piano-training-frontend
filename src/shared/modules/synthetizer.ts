@@ -1,6 +1,8 @@
 import { Module } from "../../core/abstract_classes/module";
 import type { ExerciceStore } from "../../core/services/stores/exerciceStore";
+import { defaultOscillator } from "../../core/settings/synth";
 import type { Bounds } from "../../core/types/modules";
+import type { Oscillator, SynthConfig } from "../../core/types/synth";
 import { EnveloppeComponent } from "../components/synth/enveloppe/eveloppe";
 import { OscillatorComponent } from "../components/synth/oscillator/oscillator";
 
@@ -8,9 +10,11 @@ export class SynthetizerModule extends Module {
   private localMainContainer = document.createElement("div");
   private oscillatorColumn = document.createElement("div");
   private oscillatorRowIdIndex = 0;
+  private config: SynthConfig;
 
   constructor(bounds: Bounds, store: ExerciceStore) {
     super(bounds, store);
+    this.config = store.getState("synthConfig") as SynthConfig;
     this.content.style.display = "flex";
     this.content.style.flexDirection = "column";
     this.content.style.height = "100%";
@@ -18,7 +22,9 @@ export class SynthetizerModule extends Module {
     this.createLocalMainContainer();
     this.createOscillatorColumn();
     this.createOscillatorRowButton();
-    this.newRow();
+    for (const osc of this.config.oscillators) {
+      this.newRow(osc);
+    }
     this.filterColumn();
   }
 
@@ -70,12 +76,12 @@ export class SynthetizerModule extends Module {
     this.localMainContainer.appendChild(filterColumn);
   }
 
-  private newRow() {
+  private newRow(osc: Oscillator) {
     const row = document.createElement("div");
     row.id = `${this.oscillatorRowIdIndex}`;
     this.oscillatorRowIdIndex++;
-    const oscillator = this.createOscillator();
-    const enveloppe = this.createEnveloppe();
+    const oscillator = this.createOscillator(osc);
+    const enveloppe = this.createEnveloppe(osc);
     const closeButton = this.createRemoveOscillatorButton(row.id);
     const filterLink = this.createFilterLink();
 
@@ -103,7 +109,7 @@ export class SynthetizerModule extends Module {
     const button = document.createElement("button");
     button.innerText = "+";
 
-    button.addEventListener("click", () => this.newRow());
+    button.addEventListener("click", () => this.newRow(defaultOscillator));
     rowButtonContainer.appendChild(button);
     this.oscillatorColumn.appendChild(rowButtonContainer);
   }
@@ -162,24 +168,24 @@ export class SynthetizerModule extends Module {
     return buttonContainer;
   }
 
-  private createOscillator(): HTMLDivElement {
+  private createOscillator(osc: Oscillator): HTMLDivElement {
     const oscillator = document.createElement("div");
     oscillator.style.border = "1px solid black";
     oscillator.style.boxSizing = "border-box";
     oscillator.style.flex = "1";
 
-    const oscillatorComponent = new OscillatorComponent();
+    const oscillatorComponent = new OscillatorComponent(osc);
     oscillator.appendChild(oscillatorComponent.content);
     return oscillator;
   }
 
-  private createEnveloppe(): HTMLDivElement {
+  private createEnveloppe(osc: Oscillator): HTMLDivElement {
     const enveloppe = document.createElement("div");
     enveloppe.style.border = "1px solid black";
     enveloppe.style.boxSizing = "border-box";
     enveloppe.style.flex = "1";
 
-    const enveloppeComponent = new EnveloppeComponent();
+    const enveloppeComponent = new EnveloppeComponent(osc);
     enveloppe.appendChild(enveloppeComponent.content);
     return enveloppe;
   }

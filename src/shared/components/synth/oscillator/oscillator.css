@@ -1,4 +1,4 @@
 .dragover {
-  border-color: blue;
+  background-color: rgb(78, 128, 78) !important;
   background: #eef;
 }

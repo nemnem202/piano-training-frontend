@@ -1,4 +1,7 @@
-export type Waveform = "sin" | "square" | "saw" | "sawtooth";
+export type Waveform = {
+  title: string;
+  data: Float32Array[];
+};
 
 export type FilterType = "low-cut" | "high-cut" | "bell" | "low-shelf" | "high-shelf";
 

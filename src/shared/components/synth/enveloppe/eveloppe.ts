@@ -1,15 +1,10 @@
 import { Component } from "../../../../core/abstract_classes/component";
-import type { Enveloppe } from "../../../../core/types/synth";
+import type { Enveloppe, Oscillator } from "../../../../core/types/synth";
 import { Knob } from "../../knob/knob";
 
 export class EnveloppeComponent extends Component {
   canvas = document.createElement("canvas");
-  enveloppe: Enveloppe = {
-    attack: 50,
-    decay: 100,
-    decayLevel: 100,
-    release: 100,
-  };
+  enveloppe: Enveloppe;
 
   private canvasColumn = document.createElement("div");
   private knobsColumn = document.createElement("div");
@@ -18,8 +13,9 @@ export class EnveloppeComponent extends Component {
   private height = 150; // hauteur du canvas
   private padding = 10; // marge pour les axes
 
-  constructor() {
+  constructor(osc: Oscillator) {
     super("div", "");
+    this.enveloppe = osc.enveloppe;
     this.initOverview();
     this.initKnobs();
     this.initCanvas();
