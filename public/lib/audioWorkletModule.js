@@ -1,4 +1,7 @@
+const BUFFER_SIZE = 2048 / 2 / 2;
+
 class AudioWorkletModule extends AudioWorkletProcessor {
+  processingBuffer = false;
   constructor(options) {
     super();
 
@@ -37,8 +40,13 @@ class AudioWorkletModule extends AudioWorkletProcessor {
       }
     }
 
-    if (this.availableSamples < 2048) {
+    if (this.availableSamples < BUFFER_SIZE && !this.processingBuffer) {
       this.port.postMessage({ type: "buffer-request" });
+      this.processingBuffer = true;
+    } else if (this.availableSamples >= BUFFER_SIZE) {
+      this.processingBuffer = false;
+    } else if (this.availableSamples === 0) {
+      this.port.postMessage({ type: "log", message: "glitch !" });
     }
 
     return true;
