@@ -38,6 +38,6 @@ export class SynthApi {
   }
 
   static stopNote(note: noteDTO) {
-    console.log(stop_note(note.value));
+    stop_note(note.value);
   }
 }

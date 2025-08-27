@@ -18,8 +18,6 @@ class AudioWorkletModule extends AudioWorkletProcessor {
         this.availableSamples += data.length;
       }
     };
-
-    console.log("module init", this.bufferSize);
   }
 
   process(inputs, outputs, parameters) {
