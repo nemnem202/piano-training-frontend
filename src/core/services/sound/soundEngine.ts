@@ -36,7 +36,6 @@ export class SoundEngine {
     this.workletNode.port.onmessage = async (event) => {
       if (event.data.type === "buffer-request") {
         const buffer = generate_buffer(BUFFER_SIZE);
-        console.log("buffer request");
         this.workletNode.port.postMessage({ type: "buffer", buffer }, [buffer.buffer]);
       }
     };

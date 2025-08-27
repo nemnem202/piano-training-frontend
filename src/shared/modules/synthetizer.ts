@@ -1,16 +1,23 @@
 import { Module } from "../../core/abstract_classes/module";
 import type { ExerciceStore } from "../../core/services/stores/exerciceStore";
 import type { Bounds } from "../../core/types/modules";
+import { EnveloppeComponent } from "../components/synth/enveloppe/eveloppe";
+import { OscillatorComponent } from "../components/synth/oscillator/oscillator";
 
 export class SynthetizerModule extends Module {
-  localMainContainer = document.createElement("div");
+  private localMainContainer = document.createElement("div");
+  private oscillatorColumn = document.createElement("div");
+  private oscillatorRowIdIndex = 0;
 
   constructor(bounds: Bounds, store: ExerciceStore) {
     super(bounds, store);
     this.content.style.display = "flex";
     this.content.style.flexDirection = "column";
+    this.content.style.height = "100%";
     this.createHeader();
     this.createLocalMainContainer();
+    this.createOscillatorColumn();
+    this.createOscillatorRowButton();
     this.newRow();
     this.filterColumn();
   }
@@ -21,6 +28,7 @@ export class SynthetizerModule extends Module {
     this.localMainContainer.style.flex = "1";
     this.localMainContainer.style.backgroundColor = "yellow";
     this.localMainContainer.style.display = "flex";
+    this.localMainContainer.style.overflow = "hidden";
   }
 
   private createHeader() {
@@ -30,6 +38,15 @@ export class SynthetizerModule extends Module {
     header.style.minHeight = "40px";
     header.style.width = "100%";
     this.content.appendChild(header);
+  }
+
+  private createOscillatorColumn() {
+    this.localMainContainer.appendChild(this.oscillatorColumn);
+    this.oscillatorColumn.style.flex = "1";
+    this.oscillatorColumn.className = "oscillator-column";
+    this.oscillatorColumn.style.display = "flex";
+    this.oscillatorColumn.style.flexDirection = "column";
+    this.oscillatorColumn.style.overflowY = "auto";
   }
 
   private filterColumn() {
@@ -54,22 +71,47 @@ export class SynthetizerModule extends Module {
   }
 
   private newRow() {
+    const row = document.createElement("div");
+    row.id = `${this.oscillatorRowIdIndex}`;
+    this.oscillatorRowIdIndex++;
     const oscillator = this.createOscillator();
     const enveloppe = this.createEnveloppe();
+    const closeButton = this.createRemoveOscillatorButton(row.id);
+    const filterLink = this.createFilterLink();
 
-    const row = document.createElement("div");
+    row.appendChild(closeButton);
     row.appendChild(oscillator);
     row.appendChild(enveloppe);
+    row.appendChild(filterLink);
 
-    row.style.flex = "1";
+    row.style.width = "100%";
     row.style.border = "1px solid black";
     row.style.boxSizing = "border-box";
     row.style.display = "flex";
-    row.style.maxHeight = "150px";
-    this.localMainContainer.appendChild(row);
+    row.style.minHeight = "100px";
+    this.oscillatorColumn.appendChild(row);
   }
 
-  private removeRow(id: string) {}
+  private createOscillatorRowButton() {
+    const rowButtonContainer = document.createElement("div");
+    rowButtonContainer.style.display = "flex";
+    rowButtonContainer.style.alignItems = "center";
+    rowButtonContainer.style.justifyContent = "center";
+    rowButtonContainer.style.order = "999";
+    rowButtonContainer.style.padding = "20px";
+
+    const button = document.createElement("button");
+    button.innerText = "+";
+
+    button.addEventListener("click", () => this.newRow());
+    rowButtonContainer.appendChild(button);
+    this.oscillatorColumn.appendChild(rowButtonContainer);
+  }
+
+  private removeOscillatorRow(id: string) {
+    console.log(id);
+    this.oscillatorColumn.querySelectorAll(`#${CSS.escape(id)}`).forEach((e) => e.remove());
+  }
 
   private createHeaderFilter(): HTMLDivElement {
     const headerFilter = document.createElement("div");
@@ -101,21 +143,55 @@ export class SynthetizerModule extends Module {
     return filterOverview;
   }
 
+  private createRemoveOscillatorButton(id: string): HTMLDivElement {
+    const buttonContainer = document.createElement("div");
+
+    buttonContainer.style.height = "100%";
+    buttonContainer.style.width = "50px";
+    buttonContainer.style.display = "flex";
+    buttonContainer.style.alignItems = "center";
+    buttonContainer.style.justifyContent = "center";
+
+    const button = document.createElement("button");
+    button.innerText = "-";
+    button.addEventListener("click", () => {
+      this.removeOscillatorRow(id);
+    });
+    buttonContainer.appendChild(button);
+
+    return buttonContainer;
+  }
+
   private createOscillator(): HTMLDivElement {
     const oscillator = document.createElement("div");
-    oscillator.innerText = "oscillator";
     oscillator.style.border = "1px solid black";
     oscillator.style.boxSizing = "border-box";
     oscillator.style.flex = "1";
+
+    const oscillatorComponent = new OscillatorComponent();
+    oscillator.appendChild(oscillatorComponent.content);
     return oscillator;
   }
 
   private createEnveloppe(): HTMLDivElement {
     const enveloppe = document.createElement("div");
-    enveloppe.innerText = "enveloppe";
     enveloppe.style.border = "1px solid black";
     enveloppe.style.boxSizing = "border-box";
     enveloppe.style.flex = "1";
+
+    const enveloppeComponent = new EnveloppeComponent();
+    enveloppe.appendChild(enveloppeComponent.content);
     return enveloppe;
+  }
+
+  private createFilterLink(): HTMLDivElement {
+    const container = document.createElement("div");
+
+    container.style.height = "100%";
+    container.style.width = "50px";
+
+    container.innerText = "links";
+
+    return container;
   }
 }

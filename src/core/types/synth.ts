@@ -9,11 +9,16 @@ export type Filter = {
   gain: number;
 };
 
-export type Oscillator = {
-  waveform: Waveform;
+export type Enveloppe = {
   attack: number;
   decay: number;
+  decayLevel: number;
   release: number;
+};
+
+export type Oscillator = {
+  waveform: Waveform;
+  enveloppe: Enveloppe;
   filters: Filter[];
   gain: number;
 };
