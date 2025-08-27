@@ -1,5 +1,4 @@
 import type { ExerciceConfigDTO } from "../types/config";
-import { defaultOscillator } from "./synth";
 
 export const DEFAULT_EXERCICE_CONFIG: ExerciceConfigDTO = {
   bpm: 120,

@@ -19,6 +19,7 @@ export class SynthetizerModule extends Module {
     this.content.style.flexDirection = "column";
     this.content.style.height = "100%";
     this.createHeader();
+    this.createNav();
     this.createLocalMainContainer();
     this.createOscillatorColumn();
     this.createOscillatorRowButton();
@@ -39,11 +40,26 @@ export class SynthetizerModule extends Module {
 
   private createHeader() {
     const header = document.createElement("div");
-    header.style.backgroundColor = "green";
-    header.style.height = "10%";
-    header.style.minHeight = "40px";
+    header.style.backgroundColor = "transparent";
+    header.style.height = `${this.windowBarHeight}px`;
     header.style.width = "100%";
     this.content.appendChild(header);
+  }
+
+  private createNav() {
+    const navContainer = document.createElement("div");
+    navContainer.style.backgroundColor = "green";
+    navContainer.style.width = "100%";
+    navContainer.style.display = "flex";
+    const nav = document.createElement("div");
+    const buttonMain = document.createElement("button");
+    buttonMain.innerText = "main";
+    const buttonMixer = document.createElement("button");
+    buttonMixer.innerText = "mixer";
+    nav.appendChild(buttonMain);
+    nav.appendChild(buttonMixer);
+    navContainer.appendChild(nav);
+    this.content.appendChild(navContainer);
   }
 
   private createOscillatorColumn() {

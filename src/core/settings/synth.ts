@@ -1,6 +1,7 @@
-import type { Oscillator, SynthConfig } from "../types/synth";
+import type { Oscillator, SynthConfig, Waveform } from "../types/synth";
 
 export const defaultOscillator: Oscillator = {
+  type: "waveform",
   enveloppe: {
     attack: 10,
     decay: 30,
@@ -9,10 +10,7 @@ export const defaultOscillator: Oscillator = {
   },
   filters: [],
   gain: 50,
-  waveform: {
-    title: "sin wave",
-    data: [],
-  },
+  waveform: "sin",
 };
 
 export const defaultSynthConfig: SynthConfig = {
@@ -20,5 +18,22 @@ export const defaultSynthConfig: SynthConfig = {
   oscillators: [defaultOscillator],
   log: (params: string) => {
     console.log(params);
+  },
+};
+
+export const waveFormFunctions: Record<Waveform, (x: number) => number> = {
+  sin: (x) => {
+    return Math.sin(x);
+  },
+  triangle: (x) => {
+    const t = (x / (2 * Math.PI)) % 1; // Normalisation sur [0,1)
+    return 4 * Math.abs(t - 0.5) - 1;
+  },
+  saw: (x) => {
+    const t = x / (2 * Math.PI);
+    return 2 * (t - Math.floor(t + 0.5));
+  },
+  square: (x) => {
+    return Math.sign(Math.sin(x));
   },
 };

@@ -1,5 +1,5 @@
 import type { ExerciceStoreState } from "../types/exercice";
-import { defaultOscillator, defaultSynthConfig } from "./synth";
+import { defaultSynthConfig } from "./synth";
 
 export const initialExerciceStoreState: ExerciceStoreState = {
   synthConfig: defaultSynthConfig,

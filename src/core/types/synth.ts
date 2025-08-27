@@ -1,7 +1,11 @@
-export type Waveform = {
+export type Sample = {
   title: string;
   data: Float32Array[];
 };
+
+export type Waveform = "sin" | "saw" | "triangle" | "square";
+
+export type OscillatorType = "sampler" | "waveform";
 
 export type FilterType = "low-cut" | "high-cut" | "bell" | "low-shelf" | "high-shelf";
 
@@ -20,10 +24,12 @@ export type Enveloppe = {
 };
 
 export type Oscillator = {
-  waveform: Waveform;
+  type: OscillatorType;
   enveloppe: Enveloppe;
   filters: Filter[];
   gain: number;
+  sample?: Sample;
+  waveform?: Waveform;
 };
 
 export type SynthConfig = {

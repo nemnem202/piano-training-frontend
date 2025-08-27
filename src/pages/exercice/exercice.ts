@@ -287,7 +287,7 @@ export class Exercice extends Page {
   }
 
   public bringModuleToFront(module: Module) {
-    this.topZIndex++;
+    this.topZIndex += 2;
     module.content.style.zIndex = String(this.topZIndex);
   }
 }

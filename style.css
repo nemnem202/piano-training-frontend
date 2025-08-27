@@ -82,6 +82,10 @@ button {
 
 button:hover {
   animation: bounce-stretch 0.6s ease;
+
+  span {
+    animation: reverse-bounce-stretch 0.6s ease;
+  }
 }
 
 /* Keyframes pour effet élastique */

@@ -5,7 +5,6 @@ import { Component } from "./component";
 
 const RESIZE_TOLERANCE = 10;
 const CLOSE_BUTTON_WIDTH = 50;
-const WINDOW_BAR_HEIGHT = 30;
 
 export abstract class Module extends Component {
   public bounds: Bounds = { height: 0, width: 0, x: 0, y: 0 };
@@ -16,6 +15,8 @@ export abstract class Module extends Component {
   private moveStrategy: MoveStrategy = new FreeMoveStrategy();
   private resizeStrategy: ResizeStrategy = new FreeResizeStrategy();
   private windowBar: HTMLDivElement;
+
+  protected windowBarHeight = 30;
 
   constructor(bounds: Bounds, store: ExerciceStore) {
     super("div", "");
@@ -41,7 +42,7 @@ export abstract class Module extends Component {
 
   private initStyles() {
     if (!this.container) return;
-    this.content.style.backgroundColor = "red";
+    // this.content.style.backgroundColor = "transparent";
     this.content.style.zIndex = String(this.container.modules.size);
     this.content.style.position = "absolute";
     this.content.style.top = `0px`;
@@ -54,7 +55,7 @@ export abstract class Module extends Component {
       if (!this.container) return;
       if (this.container.resizedModule.length === 0 && !this.container.draggedModule) {
         this.windowBar.style.display = "flex";
-        this.windowBar.style.height = `${WINDOW_BAR_HEIGHT}px`;
+        this.windowBar.style.height = `${this.windowBarHeight}px`;
       }
     });
     this.content.addEventListener("mouseleave", () => {
@@ -142,7 +143,7 @@ export abstract class Module extends Component {
   }
 
   private handleWindowClick() {
-    this.content.addEventListener("click", (e) => {
+    this.content.addEventListener("mousedown", (e) => {
       e.stopPropagation();
       this.bringToFront();
     });
@@ -166,7 +167,7 @@ export abstract class Module extends Component {
   public isPointInMoveZone(x: number, y: number): boolean {
     const isInRangeX =
       x >= this.bounds.x && x <= this.bounds.width + this.bounds.x - CLOSE_BUTTON_WIDTH;
-    const isInRangeY = y >= this.bounds.y && y <= this.bounds.y + WINDOW_BAR_HEIGHT;
+    const isInRangeY = y >= this.bounds.y && y <= this.bounds.y + this.windowBarHeight;
 
     return isInRangeX && isInRangeY;
   }
