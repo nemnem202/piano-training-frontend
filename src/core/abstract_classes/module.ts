@@ -27,7 +27,18 @@ export abstract class Module extends Component {
 
   public attachContainer(container: Exercice) {
     this.container = container;
+    const containerRect = container.content.getBoundingClientRect();
+    this.bounds = this.adaptBounds(this.bounds, containerRect);
     this.init();
+  }
+
+  private adaptBounds(bounds: Bounds, containerRect: DOMRect): Bounds {
+    bounds.x = (bounds.x / 100) * containerRect.width;
+    bounds.y = (bounds.y / 100) * containerRect.height;
+    bounds.width = (bounds.width / 100) * containerRect.width;
+    bounds.height = (bounds.height / 100) * containerRect.height;
+
+    return bounds;
   }
 
   private init() {

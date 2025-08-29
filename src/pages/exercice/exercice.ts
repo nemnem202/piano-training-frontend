@@ -79,10 +79,8 @@ export class Exercice extends Page {
 
   private addModules() {
     if (!this.song) return;
-    console.log(this.song);
     this.song.exercice.modules.forEach((m) => {
       const ModuleClass = moduleRegistry[m.type];
-      console.log(m.params.bounds, m);
       const module = new ModuleClass(m.params.bounds, this.store);
       module.attachContainer(this);
       this.modules.set(this.modules.size, module);

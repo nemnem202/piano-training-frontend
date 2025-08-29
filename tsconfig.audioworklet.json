@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "public/lib",
+    "rootDir": "src/core/services/sound",
+    "target": "ES2022",
+    "module": "ESNext"
+  },
+  "include": ["src/core/services/sound/audioWorkletModule.ts"]
+}

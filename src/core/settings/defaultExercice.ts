@@ -7,10 +7,10 @@ export const DEFAULT_EXERCICE_CONFIG: ExerciceConfigDTO = {
     {
       type: "SynthetizerModule",
       params: {
-        bounds: { height: 500, width: 1000, x: 50, y: 50 },
+        bounds: { height: 50, width: 50, x: 1, y: 1 },
       },
     },
-    { type: "Piano", params: { bounds: { height: 200, width: 300, x: 300, y: 300 } } },
+    { type: "Piano", params: { bounds: { height: 20, width: 50, x: 50, y: 50 } } },
   ],
   magnetism: false,
 };

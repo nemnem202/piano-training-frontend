@@ -1,9 +1,7 @@
 import type { noteDTO } from "../../types/config";
 import type { ExerciceStore } from "../stores/exerciceStore";
-import init, { play_note, stop_note } from "./rust-synth/build/rust_synth.js";
-import { SoundEngine } from "./soundEngine.js";
 
-const initRustSynth = init;
+import { SoundEngine } from "./soundEngine.js";
 
 export class SynthApi {
   private notes: noteDTO[] = [];
@@ -12,7 +10,6 @@ export class SynthApi {
     store.subscribe("notes", () => this.listenStore(store));
     this.soundEngine = SoundEngine.getInstance();
     this.soundEngine.init();
-    initRustSynth();
   }
 
   private listenStore = (store: ExerciceStore) => {
@@ -31,13 +28,7 @@ export class SynthApi {
     this.notes = [...storeNotes];
   };
 
-  static playNote(note: noteDTO) {
-    if (!note.velocity) note.velocity = 50;
+  static async playNote(note: noteDTO) {}
 
-    console.log(play_note(note.value, note.velocity));
-  }
-
-  static stopNote(note: noteDTO) {
-    stop_note(note.value);
-  }
+  static async stopNote(note: noteDTO) {}
 }
