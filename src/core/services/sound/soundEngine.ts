@@ -1,4 +1,4 @@
-const BUFFER_SIZE = 4096;
+const BUFFER_SIZE = 1024;
 const BUFFER_QUEUE_LENGTH = 2;
 const RING_BUFFER_SIZE = BUFFER_SIZE * BUFFER_QUEUE_LENGTH;
 
@@ -42,16 +42,23 @@ export class SoundEngine {
     // Initialisation du worker wasm
     /////////////////////////////////////
 
+    console.log("[SOUND ENGINE] creation of rust worker...");
+
     const rustWorker = new Worker(new URL("./rustWorker.ts", import.meta.url), {
       type: "module",
       name: "rustWorker",
     });
 
-    rustWorker.postMessage({
-      type: "init",
-      sharedBuffer: sharedBuffer,
-      ringBufferSize: RING_BUFFER_SIZE,
-    });
+    rustWorker.onmessage = (e: MessageEvent) => {
+      if (e.data.type === "module_end_init") {
+        console.log("[SOUND ENGINE] worker module init end, init wasm...");
+        rustWorker.postMessage({
+          type: "init_wasm",
+          sharedBuffer: sharedBuffer,
+          ringBufferSize: RING_BUFFER_SIZE,
+        });
+      }
+    };
 
     ///////////////////////////////////////
     // initialisation du contexte audio
@@ -79,9 +86,18 @@ export class SoundEngine {
     // mise en place des logs pour le debug
     ////////////////////////////
 
-    this.workletNode.port.onmessage = async (event) => {
-      if (event.data.type === "log") {
-        console.log(event.data.message);
+    let lastBufferRequestTime: number | null = null;
+
+    this.workletNode.port.onmessage = (event) => {
+      if (event.data.type === "log" && event.data.message === "[AUDIO WORKLET] buffer requested") {
+        const now = performance.now(); // timestamp haute précision en ms
+
+        if (lastBufferRequestTime !== null) {
+          const delta = now - lastBufferRequestTime;
+          console.log(`Intervalle depuis dernier buffer request: ${delta.toFixed(2)} ms`);
+        }
+
+        lastBufferRequestTime = now;
       }
     };
   }

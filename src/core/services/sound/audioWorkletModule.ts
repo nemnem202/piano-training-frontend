@@ -32,37 +32,44 @@ class AudioWorkletModule extends AudioWorkletProcessor {
     const left = output[0];
     const right = output[1];
 
-    const rIndex = Atomics.load(this.readIndex, 0);
-    const wIndex = Atomics.load(this.writeIndex, 0);
+    let rIndex = Atomics.load(this.readIndex, 0);
+    const wIndexNow = Atomics.load(this.writeIndex, 0);
+
+    let underflow = false;
 
     for (let i = 0; i < left.length; i++) {
-      if (rIndex === wIndex) {
+      if (rIndex === wIndexNow) {
         // 🔇 Pas de donnée -> silence
         left[i] = 0;
         right[i] = 0;
-
-        // Préviens main thread qu’on a besoin de data
-        this.port.postMessage({ type: "log", message: "[AUDIO WOKLET] no inputs" });
+        underflow = true;
       } else {
         // 🔊 Lire un sample du ring buffer
         const sample = this.ringBuffer[rIndex];
         left[i] = sample;
         right[i] = sample; // copie en stéréo pour l’instant
 
-        // avancer readIndex
-        Atomics.store(this.readIndex, 0, (rIndex + 1) % this.ringBufferSize);
+        rIndex = (rIndex + 1) % this.ringBufferSize;
       }
     }
 
+    Atomics.store(this.readIndex, 0, rIndex);
+
+    if (underflow) {
+      this.port.postMessage({ type: "log", message: "[AUDIO WORKLET] no inputs (underflow)" });
+    }
+
+    const wIndex = Atomics.load(this.writeIndex, 0);
     const availableSamples = (wIndex - rIndex + this.ringBufferSize) % this.ringBufferSize;
 
     if (availableSamples < this.bufferSize && Atomics.load(this.flag, 0) === 1) {
-      this.port.postMessage({ type: "log", message: "[AUDIO WORKLET] buffer requested" });
+      // marquer la demande (0 = need refill), et notifier le worker
       Atomics.store(this.flag, 0, 0);
-      Atomics.notify(this.flag, 0);
+      Atomics.notify(this.flag, 0, 1);
+      this.port.postMessage({ type: "log", message: "[AUDIO WORKLET] buffer requested" });
     }
 
-    return false;
+    return true;
   }
 }
 
