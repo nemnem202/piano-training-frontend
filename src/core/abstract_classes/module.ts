@@ -18,6 +18,8 @@ export abstract class Module extends Component {
 
   protected windowBarHeight = 30;
 
+  abstract destroy(): void;
+
   constructor(bounds: Bounds, store: ExerciceStore) {
     super("div", "");
     this.store = store;
@@ -150,6 +152,8 @@ export abstract class Module extends Component {
   private handleCloseButtonHit(e: MouseEvent) {
     if (!this.container) return;
     e.stopPropagation();
+    console.log("destroy module...");
+    this.destroy();
     this.container.removeModule(this);
   }
 

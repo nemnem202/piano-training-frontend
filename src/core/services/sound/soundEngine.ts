@@ -4,8 +4,12 @@ const RING_BUFFER_SIZE = BUFFER_SIZE * BUFFER_QUEUE_LENGTH;
 
 export class SoundEngine {
   private static instance: SoundEngine;
+
+  private refCount = 0;
+
   private audioCtx!: AudioContext;
   private workletNode!: AudioWorkletNode;
+  private rustWorker!: Worker;
 
   private constructor() {}
 
@@ -17,6 +21,8 @@ export class SoundEngine {
   }
 
   public async init() {
+    if (this.audioCtx) return;
+
     /////////////////////////////////////
     // définition du buffer partagé,
     // il contient le tableau du current buffer,
@@ -44,15 +50,15 @@ export class SoundEngine {
 
     console.log("[SOUND ENGINE] creation of rust worker...");
 
-    const rustWorker = new Worker(new URL("./rustWorker.ts", import.meta.url), {
+    this.rustWorker = new Worker(new URL("./rustWorker.ts", import.meta.url), {
       type: "module",
       name: "rustWorker",
     });
 
-    rustWorker.onmessage = (e: MessageEvent) => {
+    this.rustWorker.onmessage = (e: MessageEvent) => {
       if (e.data.type === "module_end_init") {
         console.log("[SOUND ENGINE] worker module init end, init wasm...");
-        rustWorker.postMessage({
+        this.rustWorker.postMessage({
           type: "init_wasm",
           sharedBuffer: sharedBuffer,
           ringBufferSize: RING_BUFFER_SIZE,
@@ -100,5 +106,19 @@ export class SoundEngine {
         lastBufferRequestTime = now;
       }
     };
+  }
+
+  release() {
+    this.refCount--;
+    if (this.refCount <= 0) {
+      console.log("stop to audio context");
+      this.workletNode.disconnect();
+      this.audioCtx.close();
+      this.rustWorker.terminate();
+      this.audioCtx = null!;
+      this.workletNode = null!;
+      this.rustWorker = null!;
+      SoundEngine.instance = null!;
+    }
   }
 }

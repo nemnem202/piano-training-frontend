@@ -1,4 +1,5 @@
 import { Module } from "../../core/abstract_classes/module";
+import { MidiApi } from "../../core/services/midi/midiApi";
 import { ExerciceStore } from "../../core/services/stores/exerciceStore";
 import type { noteDTO } from "../../core/types/config";
 import type { Bounds } from "../../core/types/modules";
@@ -11,6 +12,7 @@ const KEYS_MAP = [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12];
 
 export class Piano extends Module {
   private keysContainer = document.createElement("div");
+  private midiApi: MidiApi | null = null;
 
   constructor(bounds: Bounds, store: ExerciceStore) {
     super(bounds, store);
@@ -18,6 +20,11 @@ export class Piano extends Module {
     this.setupKeyboard();
     this.listenKeyboard();
     this.listenStore();
+    this.setupMidiApi();
+  }
+
+  destroy(): void {
+    this.midiApi = null;
   }
 
   private setupKeyboard() {
@@ -77,6 +84,10 @@ export class Piano extends Module {
       this.colorNotes(notes);
       this.scrollOnCenter(notes);
     });
+  }
+
+  private setupMidiApi() {
+    this.midiApi = new MidiApi(this.store);
   }
 
   private colorNotes(notes: noteDTO[]) {

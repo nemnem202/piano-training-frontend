@@ -66,7 +66,7 @@ class AudioWorkletModule extends AudioWorkletProcessor {
       // marquer la demande (0 = need refill), et notifier le worker
       Atomics.store(this.flag, 0, 0);
       Atomics.notify(this.flag, 0, 1);
-      this.port.postMessage({ type: "log", message: "[AUDIO WORKLET] buffer requested" });
+      // this.port.postMessage({ type: "log", message: "[AUDIO WORKLET] buffer requested" });
     }
 
     return true;

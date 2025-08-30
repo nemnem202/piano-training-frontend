@@ -1,7 +1,6 @@
 import type { Module } from "../../core/abstract_classes/module";
 import { Page } from "../../core/abstract_classes/page";
 import { PlaylistDAO } from "../../core/services/data/playlistDAO";
-import { SynthApi } from "../../core/services/sound/synthApi";
 import { ExerciceStore } from "../../core/services/stores/exerciceStore";
 import { moduleRegistry } from "../../core/settings/moduleRegistry";
 import type { Corner, Dimensions, Edge } from "../../core/types/modules";
@@ -47,7 +46,6 @@ export class Exercice extends Page {
     this.song = playlist.songs.find((s) => s.title === this.params?.songTitle);
     if (!this.song) return;
 
-    this.setUpSynthApi();
     this.updateDimensions();
     this.drawGrid();
     this.addModules();
@@ -71,10 +69,6 @@ export class Exercice extends Page {
     });
 
     this.content.appendChild(button);
-  }
-
-  private setUpSynthApi() {
-    new SynthApi(this.store);
   }
 
   private addModules() {

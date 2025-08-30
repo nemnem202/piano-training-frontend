@@ -31,4 +31,8 @@ export class SynthApi {
   static async playNote(note: noteDTO) {}
 
   static async stopNote(note: noteDTO) {}
+
+  public destroy() {
+    this.soundEngine.release();
+  }
 }

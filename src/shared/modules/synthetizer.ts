@@ -1,4 +1,5 @@
 import { Module } from "../../core/abstract_classes/module";
+import { SynthApi } from "../../core/services/sound/synthApi";
 import type { ExerciceStore } from "../../core/services/stores/exerciceStore";
 import { defaultOscillator } from "../../core/settings/synth";
 import type { Bounds } from "../../core/types/modules";
@@ -11,9 +12,11 @@ export class SynthetizerModule extends Module {
   private oscillatorColumn = document.createElement("div");
   private oscillatorRowIdIndex = 0;
   private config: SynthConfig;
+  private synthApi: SynthApi | null = null;
 
   constructor(bounds: Bounds, store: ExerciceStore) {
     super(bounds, store);
+    this.setUpSynthApi();
     this.config = store.getState("synthConfig") as SynthConfig;
     this.content.style.display = "flex";
     this.content.style.flexDirection = "column";
@@ -27,6 +30,15 @@ export class SynthetizerModule extends Module {
       this.newRow(osc);
     }
     this.filterColumn();
+  }
+
+  destroy() {
+    this.synthApi?.destroy();
+    this.synthApi = null;
+  }
+
+  private setUpSynthApi() {
+    this.synthApi = new SynthApi(this.store);
   }
 
   private createLocalMainContainer() {
