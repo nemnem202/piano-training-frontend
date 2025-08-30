@@ -1,24 +1,21 @@
-import headerTemplate from "./header.html?raw";
-import { Button } from "../button/button";
 import { Component } from "../../../core/abstract_classes/component";
 import { Router } from "../../../app/router";
-import { ImportModal } from "../importModal/import";
 import { AppManager } from "../../../app/appManager";
+import { Logo } from "../logo/logo";
+import { Nav } from "../nav/nav";
 
 export class Header extends Component {
   router: Router | null = null;
   constructor() {
-    super("header", headerTemplate);
+    super("header", "");
     const router = AppManager.getInstance().router;
     this.router = router;
-    const menuContainer = document.createElement("div");
-    menuContainer.className = "header-menu-container";
-    this.content.appendChild(menuContainer);
-    const Home = new Button("Home", () => this.router!.redirect(""));
-    menuContainer.appendChild(Home.content);
-    const settings = new Button("Settings", () => this.router!.redirect("settings"));
-    menuContainer.appendChild(settings.content);
-    const importButton = new Button("Import", () => new ImportModal());
-    menuContainer.appendChild(importButton.content);
+
+    const logo = new Logo();
+    this.content.appendChild(logo.content);
+    logo.content.addEventListener("click", () => this.router?.redirect(""));
+
+    const navBar = new Nav();
+    this.content.appendChild(navBar.content);
   }
 }

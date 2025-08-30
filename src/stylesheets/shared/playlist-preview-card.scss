@@ -1,0 +1,34 @@
+@use "../variables" as *;
+
+.playlist-preview-card {
+  overflow: hidden;
+  border-radius: $border-radius1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: fit-content;
+  min-width: 20rem;
+  // border: 2px solid white;
+}
+
+.preview-img {
+  height: 8rem;
+  width: 100%;
+  background-color: $bg-sec;
+}
+
+.playlist-preview-card-title {
+  font: $small-font;
+  color: $accent;
+  padding: $padding1;
+}
+
+.playlist-preview-card-details {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  font: $small-font;
+  color: $text;
+  opacity: $opacity1;
+  padding: $padding1;
+}

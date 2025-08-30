@@ -144,7 +144,7 @@ export class ImportModal extends Component {
         const title = await PlaylistDAO.create(playlist);
         if (title != null) {
           this.destroy();
-          this.router!.redirect(`playlist-preview/${title}`);
+          this.router!.redirect(`playlist/${title}`);
         } else {
           console.error("An error occurred while saving the data");
         }

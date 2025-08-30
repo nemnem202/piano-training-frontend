@@ -3,11 +3,11 @@ import { Home } from "../pages/home/home";
 import { Create } from "../pages/create/create";
 import { NotFound } from "../pages/not_found/notFound";
 import { Settings } from "../pages/settings/settings";
-import { PlaylistPreview } from "../pages/playlistPreview/playlistPreview";
 import checkPlaylistId from "../core/guards/checkPlaylistTitle";
 import { PlaylistPage } from "../pages/playlist/playlist";
 import checkSongTitle from "../core/guards/checkSongTitle";
 import type { Route } from "../core/types/routes";
+import { newPlaylist } from "../pages/new_playlist/new_playlist";
 
 const ROUTES: Route[] = [
   { path: "not-found", page: () => new NotFound(), header: true, footer: true },
@@ -26,18 +26,18 @@ const ROUTES: Route[] = [
   },
   { path: "create", page: () => new Create(), header: true, footer: true },
   {
-    path: "playlist-preview",
-    children: [
-      { path: ":title", page: (params) => new PlaylistPreview(params), guard: checkPlaylistId },
-    ],
+    path: "new",
+    footer: true,
+    header: true,
+    page: () => new newPlaylist(),
   },
   {
     path: "playlist",
-    header: true,
-    footer: true,
     children: [
       {
         path: ":title",
+        header: true,
+        footer: true,
         page: (params) => new PlaylistPage(params),
         guard: checkPlaylistId,
       },

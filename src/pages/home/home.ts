@@ -1,8 +1,9 @@
 import { Page } from "../../core/abstract_classes/page";
 import home from "./home.html?raw";
-import "./home.css";
 import { PlaylistDAO } from "../../core/services/data/playlistDAO";
 import { AppManager } from "../../app/appManager";
+import { playlistTags } from "../../core/settings/playlist";
+import { PlaylistPreviewCard } from "../../shared/components/playlist-preview-card/playlist_preview_card";
 
 export class Home extends Page {
   constructor() {
@@ -15,28 +16,24 @@ export class Home extends Page {
 
     if (!container) return;
 
-    const playlists = await PlaylistDAO.getAll();
+    for (const tag of playlistTags) {
+      const section = document.createElement("section");
+      const title = document.createElement("h1");
+      title.textContent = tag;
+      title.classList.add("heading");
 
-    playlists.forEach((p) => {
-      const playlistPreview = document.createElement("div");
-      playlistPreview.className = "preview-playlist";
-      playlistPreview.innerHTML = `
-      <h4>${p.title}</h4>
-      <span>songs: ${p.songs.length}</span>
-      `;
-      container.appendChild(playlistPreview);
+      const cardsContainer = document.createElement("div");
+      cardsContainer.className = "playlist-card-container";
 
-      playlistPreview.addEventListener("click", () => {
-        AppManager.getInstance().router?.redirect(`playlist/${p.title}`);
-      });
-    });
+      for (let i = 0; i <= 5; i++) {
+        const card = new PlaylistPreviewCard();
+        cardsContainer.appendChild(card.content);
+      }
 
-    const newPlaylist = document.createElement("div");
-    newPlaylist.className = "preview-playlist";
-    newPlaylist.innerHTML = `
-      <h4>+</h4>
-      <span>create new</span>
-      `;
-    container.appendChild(newPlaylist);
+      section.appendChild(title);
+      section.appendChild(cardsContainer);
+
+      container.appendChild(section);
+    }
   }
 }

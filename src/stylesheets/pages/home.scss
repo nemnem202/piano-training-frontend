@@ -1,0 +1,41 @@
+@use "../variables" as *;
+
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 40rem;
+}
+
+.banner .paragraph {
+  text-align: center;
+  max-width: 100rem;
+}
+
+.preview-playlists-container {
+  max-width: 160rem;
+  overflow: hidden;
+}
+
+.preview-playlists-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-playlists-container .heading {
+  font-size: $text-md;
+  padding-bottom: $padding3;
+  padding-top: $padding6;
+}
+
+.playlist-card-container {
+  display: flex;
+  gap: $padding4;
+}

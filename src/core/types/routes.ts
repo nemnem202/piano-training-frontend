@@ -5,6 +5,6 @@ export type Route = {
   page?: (params: Record<string, string>) => any;
   header?: boolean;
   footer?: boolean;
-  guard?: (params: Record<string, string>) => Promise<boolean | string[]>;
+  guard?: (params: Record<string, string>) => Promise<boolean | any>;
   children?: Route[];
 };

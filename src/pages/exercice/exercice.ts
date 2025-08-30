@@ -33,7 +33,7 @@ export class Exercice extends Page {
     this.content.style.webkitUserSelect = "none";
     this.content.setAttribute("draggable", "false");
 
-    this.createStartButton();
+    this.init();
   }
 
   /** Initialise les dimensions et le rendu du canvas */
@@ -57,18 +57,6 @@ export class Exercice extends Page {
     });
 
     this.listenMouseEvents();
-  }
-
-  private createStartButton() {
-    const button = document.createElement("button");
-    button.innerText = "Start ?";
-
-    button.addEventListener("click", () => {
-      button.remove();
-      requestAnimationFrame(() => this.init());
-    });
-
-    this.content.appendChild(button);
   }
 
   private addModules() {

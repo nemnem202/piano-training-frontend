@@ -1,0 +1,15 @@
+@use "../variables" as *;
+
+.header-navbar {
+  display: flex;
+  gap: $padding1;
+}
+
+.header-navbar div {
+  font: $medium-default-font;
+  cursor: pointer;
+}
+
+.header-navbar .accent {
+  text-decoration: underline;
+}

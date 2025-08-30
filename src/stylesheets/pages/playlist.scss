@@ -1,0 +1,131 @@
+@use "../variables" as *;
+
+.playlist-page-container {
+  display: flex;
+  flex-direction: column;
+  gap: $padding5;
+  align-items: center;
+}
+
+.input-heading {
+  all: unset;
+  background-color: transparent;
+  font: $heading-font;
+  color: $highlight;
+  width: min-content;
+  box-sizing: border-box;
+}
+
+.playlist-infos {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.input-heading:focus {
+  outline: 0.1rem solid $text;
+}
+
+.playlist-difficulty {
+  display: flex;
+}
+
+#difficulty-menu {
+  background-color: transparent;
+  font: $paragraph-font;
+  color: $highlight;
+  border: none;
+  outline: none;
+}
+
+#difficulty-menu option {
+  background-color: transparent;
+}
+
+.playlist-import-button {
+  background-color: transparent !important;
+}
+
+.playlist-modules {
+  display: flex;
+  width: 100%;
+  gap: $padding3;
+}
+
+.new-module-button {
+  width: 20rem;
+  height: 20rem;
+  border: 1px solid white;
+  border-radius: $border-radius2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.new-module-button svg {
+  width: 10rem;
+  height: 10rem;
+  fill: $text;
+}
+
+.module-preview {
+  width: 20rem;
+  height: 20rem;
+  border-radius: $border-radius2;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.module-preview-image {
+  width: 20rem;
+  height: 10rem;
+  background-color: $bg-sec;
+}
+
+.module-preview-infos {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  flex: 1;
+  padding: $padding1;
+}
+
+.module-preview-title-author {
+  display: flex;
+  flex-direction: column;
+}
+
+.module-preview-key-bpm {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.module-preview-title {
+  font: $small-font;
+  font-size: $text-sm;
+  color: $accent;
+}
+
+.module-preview-author {
+  font: $small-font;
+  font-size: $text-xxs !important;
+  color: $text;
+  opacity: $opacity1;
+}
+
+.module-preview-key {
+  font: $small-font;
+  font-size: $text-xxs !important;
+  color: $text;
+  opacity: $opacity1;
+}
+
+.module-preview-bpm {
+  font: $small-font;
+  font-size: $text-xxs !important;
+  color: $text;
+  opacity: $opacity1;
+}

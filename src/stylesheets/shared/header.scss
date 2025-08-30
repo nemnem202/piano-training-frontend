@@ -1,0 +1,9 @@
+@use "../variables" as *;
+
+header {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  order: -1;
+  padding: $padding2 $padding3;
+}

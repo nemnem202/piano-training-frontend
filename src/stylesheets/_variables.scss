@@ -1,0 +1,122 @@
+@import url("https://fonts.googleapis.com/css2?family=Slabo+13px&family=Ultra&display=swap");
+// sizes unit
+
+$text-xxxs: 1rem;
+$text-xxs: 1.6rem;
+$text-xs: 1.8rem;
+$text-sm: 2.4rem;
+$text-md: 3.2rem;
+$text-lg: 4.8rem;
+$text-xl: 6rem;
+$text-2xl: 24rem;
+$text-3xl: 32rem;
+
+$padding1: 1rem;
+$padding2: 1.5rem;
+$padding3: 2.4rem;
+$padding4: 3.2rem;
+$padding5: 4.8rem;
+$padding6: 6rem;
+
+$border-radius1: 1rem;
+$border-radius2: 1.6rem;
+
+// colors
+
+$bg-color: #001524;
+$bg-sec: #15616d;
+$accent: #ffecd1;
+$highlight: #ff7d00;
+$warm: #78290f;
+$text: rgb(255, 246, 226);
+
+// fonts
+
+$primary-font: "Ultra";
+$secondary-font: "Slabo 13px";
+
+$logo-font: italic normal $text-md $primary-font;
+$heading-font: normal bolder $text-xl $secondary-font;
+$medium-default-font: normal normal $text-md $secondary-font;
+$paragraph-font: normal normal $text-sm $secondary-font;
+$small-font: normal lighter $text-xs $secondary-font;
+
+// opacities
+
+$opacity1: 0.5;
+
+// global
+
+:root {
+  font-size: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body,
+html {
+  all: unset;
+}
+
+body {
+  background: repeating-linear-gradient(to bottom, $bg-color 0px, $warm 4000px, $bg-color 4000px);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+#app {
+  padding: 0px $padding5;
+}
+
+// text styles
+
+h1 {
+  margin: 0px;
+}
+
+.logo {
+  font: $logo-font;
+  color: $accent;
+}
+
+.secondary {
+  opacity: $opacity1;
+  color: $text;
+}
+
+.accent {
+  color: $accent;
+}
+
+.highlight {
+  color: $highlight;
+}
+
+.heading-logolike {
+  color: $text;
+  font: $logo-font;
+  font-size: $text-xl;
+}
+
+.heading {
+  font: $heading-font;
+  color: $text;
+}
+
+.paragraph {
+  font: $paragraph-font;
+  color: $text;
+}
+
+button {
+  background-color: $bg-sec;
+  border: none;
+  color: $text;
+  font: $paragraph-font;
+  padding: $padding1 $padding3;
+  border-radius: $border-radius1;
+}

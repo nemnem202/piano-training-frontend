@@ -1,12 +1,15 @@
 import diff from "fast-diff";
 import type { ExerciceConfigDTO } from "../../../types/config";
 import { DEFAULT_EXERCICE_CONFIG } from "../../../settings/defaultExercice";
+import type { Difficulty, PlaylistTag } from "../../../types/playlist";
 
 type Diff = [-1 | 0 | 1, string];
 
 export class Playlist {
   title: string = "My playlist";
   songs: Song[];
+  difficulty: Difficulty = "easy";
+  tag: PlaylistTag = "Your playground";
 
   constructor(ireal: string) {
     const playlistEncoded = /.*?(irealb(?:ook)?):\/\/([^"]*)/.exec(ireal);

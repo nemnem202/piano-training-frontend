@@ -1,7 +1,14 @@
+import type { difficultyPlaylist, playlistTags } from "../settings/playlist";
 import type { ExerciceConfigDTO } from "./config";
+
+export type Difficulty = (typeof difficultyPlaylist)[number];
+
+export type PlaylistTag = (typeof playlistTags)[number];
 
 export type PlaylistDTO = {
   title: string;
+  tag: PlaylistTag;
+  difficulty: Difficulty;
   songs: SongDTO[];
 };
 

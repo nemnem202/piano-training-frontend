@@ -1,3 +1,4 @@
+import { playlistTags } from "../../settings/playlist";
 import type { DBTypes } from "../../types/data";
 import type { PlaylistDTO } from "../../types/playlist";
 import type { Playlist } from "../converters/ireal-decoder/decoder";
@@ -29,6 +30,8 @@ export class PlaylistDAO {
     const id = await db.add("playlists", {
       title: playlist.title || "",
       songs: playlist.songs,
+      difficulty: playlist.difficulty,
+      tag: playlist.tag,
     });
 
     return id;
@@ -48,6 +51,8 @@ export class PlaylistDAO {
     const playlistDto: PlaylistDTO = {
       title: playlist.title || "",
       songs: playlist.songs,
+      difficulty: playlist.difficulty,
+      tag: playlist.tag,
     };
     const db = await PlaylistDAO.getDB();
     return await db.put("playlists", playlistDto);
