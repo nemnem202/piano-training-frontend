@@ -17,6 +17,9 @@ export class Piano extends Module {
   constructor(bounds: Bounds, store: ExerciceStore) {
     super(bounds, store);
 
+    this.content.classList.add("piano-module");
+    this.keysContainer.className = "keys-container";
+
     this.setupKeyboard();
     this.listenKeyboard();
     this.listenStore();
@@ -28,10 +31,6 @@ export class Piano extends Module {
   }
 
   private setupKeyboard() {
-    this.keysContainer.style.position = "absolute";
-    this.keysContainer.style.width = "100%";
-    this.keysContainer.style.height = "100%";
-    this.keysContainer.style.overflowY = "auto";
     this.content.appendChild(this.keysContainer);
 
     for (let i = 1; i <= OCTAVES_NUMBER * 14; i++) {
@@ -39,23 +38,14 @@ export class Piano extends Module {
 
       const key = document.createElement("div");
 
-      key.style.boxSizing = "border-box";
-      key.style.top = "0";
-      key.style.position = "absolute";
-      key.style.border = "1px solid black";
+      key.className = "key";
 
       if (WHITE_KEYS.includes(i % 14)) {
-        key.style.backgroundColor = "white";
-        key.style.height = "100%";
-        key.style.zIndex = "4";
-        key.style.width = "50px";
+        key.classList.add("white-key");
         key.style.left = `${((i - 1) * 50) / 2}px`;
       } else if (BLACK_KEYS.includes(i % 14)) {
-        key.style.width = "40px";
+        key.classList.add("black-key");
         key.style.left = `${((i - 1) * 50) / 2 + 5}px`;
-        key.style.backgroundColor = "black";
-        key.style.height = "50%";
-        key.style.zIndex = "5";
       }
 
       this.keysContainer.appendChild(key);
@@ -82,7 +72,7 @@ export class Piano extends Module {
       const notes = this.store.getState("notes") as noteDTO[];
 
       this.colorNotes(notes);
-      this.scrollOnCenter(notes);
+      if (this.aNoteIsOutsideView(notes)) this.scrollOnCenter(notes);
     });
   }
 
@@ -93,6 +83,25 @@ export class Piano extends Module {
   private colorNotes(notes: noteDTO[]) {
     this.keysContainer.querySelectorAll(".played").forEach((e) => e.classList.remove("played"));
     notes.forEach((n) => this.keysContainer.children[n.value].classList.add("played"));
+  }
+
+  private aNoteIsOutsideView(notes: noteDTO[]): boolean {
+    if (notes.length === 0) return false;
+
+    const containerLeft = this.keysContainer.scrollLeft;
+    const containerRight = containerLeft + this.keysContainer.clientWidth;
+
+    // on regarde chaque note
+    return notes.some((n) => {
+      const key = this.keysContainer.children[n.value] as HTMLDivElement;
+      if (!key) return false;
+
+      const keyLeft = key.offsetLeft;
+      const keyRight = keyLeft + key.offsetWidth;
+
+      // est-ce que la touche est totalement à gauche ou à droite du viewport ?
+      return keyRight < containerLeft || keyLeft > containerRight;
+    });
   }
 
   private scrollOnCenter(notes: noteDTO[]) {

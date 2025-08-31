@@ -1,0 +1,44 @@
+@use "../../variables" as *;
+
+.piano-module {
+}
+
+.keys-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.key {
+  box-sizing: border-box;
+  top: 0px;
+  position: absolute;
+  border: 0.2rem solid $bg-color;
+  border-top-width: 0.4rem;
+}
+
+.key.white-key {
+  background-color: $text;
+  height: 100%;
+  z-index: 4;
+  width: 50px;
+}
+
+.key.black-key {
+  width: 40px;
+  background-color: $bg-color;
+  border-width: 0.4rem;
+  height: 50%;
+  z-index: 5;
+}
+
+.key.played {
+  background-color: green;
+}
+
+.keys-container::-webkit-scrollbar {
+  //   height: 8px;
+  display: none;
+  height: 0px;
+}

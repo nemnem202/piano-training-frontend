@@ -1,6 +1,13 @@
 @use "variables" as *;
-@use "shared/header";
-@use "shared/playlist-preview-card.scss";
-@use "shared/nav";
 @use "pages/home";
 @use "pages/playlist.scss";
+@use "pages/exercice.scss";
+
+@use "shared/components/header";
+@use "shared/components/playlist-preview-card.scss";
+@use "shared/components/nav";
+@use "shared/components/exerciceheader.scss";
+@use "shared/components/exerciceMenu.scss";
+
+@use "shared/modules/module.scss";
+@use "shared/modules/piano.scss";

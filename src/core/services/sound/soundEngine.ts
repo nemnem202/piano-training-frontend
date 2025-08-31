@@ -112,7 +112,8 @@ export class SoundEngine {
     this.refCount--;
     if (this.refCount <= 0) {
       console.log("stop to audio context");
-      this.workletNode.disconnect();
+      if (this.workletNode) this.workletNode.disconnect();
+
       this.audioCtx.close();
       this.rustWorker.terminate();
       this.audioCtx = null!;

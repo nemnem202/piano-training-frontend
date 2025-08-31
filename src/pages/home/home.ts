@@ -1,9 +1,8 @@
 import { Page } from "../../core/abstract_classes/page";
 import home from "./home.html?raw";
-import { PlaylistDAO } from "../../core/services/data/playlistDAO";
-import { AppManager } from "../../app/appManager";
 import { playlistTags } from "../../core/settings/playlist";
 import { PlaylistPreviewCard } from "../../shared/components/playlist-preview-card/playlist_preview_card";
+import { PlaylistDAO } from "../../core/services/data/playlistDAO";
 
 export class Home extends Page {
   constructor() {
@@ -25,8 +24,12 @@ export class Home extends Page {
       const cardsContainer = document.createElement("div");
       cardsContainer.className = "playlist-card-container";
 
-      for (let i = 0; i <= 5; i++) {
-        const card = new PlaylistPreviewCard();
+      const tagsPlaylists = await PlaylistDAO.getAllWithTag(tag);
+
+      if (tagsPlaylists.length === 0) return;
+
+      for (const p of tagsPlaylists) {
+        const card = new PlaylistPreviewCard(p);
         cardsContainer.appendChild(card.content);
       }
 

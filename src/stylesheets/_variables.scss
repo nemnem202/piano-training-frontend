@@ -25,10 +25,10 @@ $border-radius2: 1.6rem;
 
 $bg-color: #001524;
 $bg-sec: #15616d;
-$accent: #ffecd1;
+$accent: #ffe5c1;
 $highlight: #ff7d00;
 $warm: #78290f;
-$text: rgb(255, 246, 226);
+$text: rgb(255, 251, 243);
 
 // fonts
 
@@ -45,6 +45,10 @@ $small-font: normal lighter $text-xs $secondary-font;
 
 $opacity1: 0.5;
 
+//transitions
+
+$transition1: all 0.2s cubic-bezier(0.94, -0.01, 0.99, 0.04);
+
 // global
 
 :root {
@@ -58,18 +62,19 @@ $opacity1: 0.5;
 body,
 html {
   all: unset;
-}
-
-body {
-  background: repeating-linear-gradient(to bottom, $bg-color 0px, $warm 4000px, $bg-color 4000px);
-  display: flex;
-  flex-direction: column;
   width: 100%;
   height: 100%;
 }
 
+body {
+  background: repeating-linear-gradient(to bottom, $bg-color 0px, $warm 2000px, $bg-color 4000px);
+  display: flex;
+  flex-direction: column;
+}
+
 #app {
-  padding: 0px $padding5;
+  width: 100%;
+  height: 100%;
 }
 
 // text styles

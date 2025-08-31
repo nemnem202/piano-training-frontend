@@ -22,9 +22,20 @@ export abstract class Module extends Component {
 
   constructor(bounds: Bounds, store: ExerciceStore) {
     super("div", "");
+    this.content.classList.add("module");
     this.store = store;
     this.bounds = bounds;
     this.windowBar = document.createElement("div");
+    this.windowBar.className = "module-windowbar";
+    document.addEventListener(
+      "wheel",
+      function (e) {
+        if (e.ctrlKey) {
+          e.preventDefault();
+        }
+      },
+      { passive: false }
+    );
   }
 
   public attachContainer(container: Exercice) {
@@ -55,11 +66,7 @@ export abstract class Module extends Component {
 
   private initStyles() {
     if (!this.container) return;
-    // this.content.style.backgroundColor = "transparent";
     this.content.style.zIndex = String(this.container.modules.size);
-    this.content.style.position = "absolute";
-    this.content.style.top = `0px`;
-    this.content.style.left = `0px`;
     this.container.content.appendChild(this.content);
   }
 
@@ -67,28 +74,18 @@ export abstract class Module extends Component {
     this.content.addEventListener("mousemove", () => {
       if (!this.container) return;
       if (this.container.resizedModule.length === 0 && !this.container.draggedModule) {
-        this.windowBar.style.display = "flex";
-        this.windowBar.style.height = `${this.windowBarHeight}px`;
+        this.windowBar.classList.add("visible");
       }
     });
     this.content.addEventListener("mouseleave", () => {
       if (!this.container) return;
       if (!(this.container.draggedModule === this)) {
-        this.windowBar.style.height = `${0}px`;
-        this.windowBar.style.display = "none";
+        this.windowBar.classList.remove("visible");
       }
     });
   }
 
   private initWindowBar() {
-    this.windowBar.style.position = "absolute";
-    this.windowBar.style.top = "0";
-    this.windowBar.style.width = "100%";
-    this.windowBar.style.display = "flex";
-    this.windowBar.style.height = `${0}px`;
-    this.windowBar.style.display = "none";
-    this.windowBar.style.zIndex = "20";
-
     const moveZone = this.createMoveZone();
     const closeButton = this.createCloseButton();
 
@@ -99,8 +96,7 @@ export abstract class Module extends Component {
 
   private createMoveZone(): HTMLDivElement {
     const moveZone = document.createElement("div");
-    moveZone.style.backgroundColor = "white";
-    moveZone.style.flex = "1";
+    moveZone.classList = "module-move-zone";
 
     moveZone.addEventListener("mousedown", (e) => this.handleMoveZoneHit(e));
     return moveZone;
@@ -108,12 +104,8 @@ export abstract class Module extends Component {
 
   private createCloseButton(): HTMLDivElement {
     const closeButton = document.createElement("div");
-    closeButton.textContent = "X";
-    closeButton.style.backgroundColor = "grey";
-    closeButton.style.width = `${CLOSE_BUTTON_WIDTH}px`;
-    closeButton.style.display = "flex";
-    closeButton.style.alignItems = "center";
-    closeButton.style.justifyContent = "center";
+    closeButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e3e3e3"><path d="m291-240-51-51 189-189-189-189 51-51 189 189 189-189 51 51-189 189 189 189-51 51-189-189-189 189Z"/></svg>`;
+    closeButton.className = "module-close-button";
 
     closeButton.addEventListener("click", (e) => this.handleCloseButtonHit(e));
     return closeButton;

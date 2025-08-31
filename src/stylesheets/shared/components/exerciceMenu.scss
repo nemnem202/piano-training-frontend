@@ -1,0 +1,60 @@
+@use "../../variables" as *;
+
+.exercice-menu {
+  width: 5rem;
+  height: 5rem;
+  position: absolute;
+  margin: $padding2 $padding3;
+  top: 0;
+  left: 0;
+  border-radius: $border-radius1;
+  border: 0.5rem solid $text;
+  opacity: $opacity1;
+  transition: $transition1;
+  background-color: $bg-color;
+  overflow: hidden;
+  z-index: 500;
+}
+
+.exercice-menu.open {
+  width: 20rem;
+  height: 50rem;
+  opacity: 1;
+}
+
+.exercice-menu .exercice-menu-header {
+  display: flex;
+  justify-content: space-between;
+  width: 19rem;
+}
+
+.exercice-menu-presets {
+  font: $paragraph-font;
+  font-size: $text-xs;
+  color: $text;
+  opacity: $opacity1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.5rem solid transparent;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.exercice-menu .exercice-menu-header svg {
+  width: 4rem;
+  height: 4rem;
+  cursor: pointer;
+}
+
+.exercice-menu-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.exercice-modules-title {
+  text-align: center;
+  font: $paragraph-font;
+  color: $accent;
+}

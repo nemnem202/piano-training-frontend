@@ -1,6 +1,5 @@
-import { playlistTags } from "../../settings/playlist";
 import type { DBTypes } from "../../types/data";
-import type { PlaylistDTO } from "../../types/playlist";
+import type { PlaylistDTO, PlaylistTag } from "../../types/playlist";
 import type { Playlist } from "../converters/ireal-decoder/decoder";
 import { openDB, type IDBPDatabase } from "idb";
 
@@ -45,6 +44,12 @@ export class PlaylistDAO {
   public static async getAll(): Promise<PlaylistDTO[]> {
     const db = await PlaylistDAO.getDB();
     return await db.getAll("playlists");
+  }
+
+  public static async getAllWithTag(tag: PlaylistTag): Promise<PlaylistDTO[]> {
+    const db = await PlaylistDAO.getDB();
+    const playlists = await db.getAll("playlists");
+    return playlists.filter((p) => p.tag === tag);
   }
 
   public static async update(playlist: Playlist): Promise<string> {

@@ -5,16 +5,16 @@ import { ExerciceStore } from "../../core/services/stores/exerciceStore";
 import { moduleRegistry } from "../../core/settings/moduleRegistry";
 import type { Corner, Dimensions, Edge } from "../../core/types/modules";
 import type { SongDTO } from "../../core/types/playlist";
-import exerciceTemplate from "./exercice.html?raw";
-import "./exerice.css";
+import { ExerciceHeader } from "../../shared/components/exerciceHeader/exerciceHeader";
+import { ExerciceMenu } from "../../shared/components/exerciceMenu/exerciceMenu";
 
 export class Exercice extends Page {
   private store = new ExerciceStore();
   private grid: HTMLCanvasElement | undefined;
   private ctx: CanvasRenderingContext2D | null = null;
   private song: SongDTO | undefined;
-  public gridCellSize = 50;
-  public readonly magnetism: boolean | undefined;
+  public gridCellSize = 30;
+  public readonly magnetism: boolean | undefined = true;
   public appDimensions: Dimensions = { width: 0, height: 0 };
   public modules: Map<number, Module> = new Map();
   private topZIndex = 0;
@@ -22,9 +22,9 @@ export class Exercice extends Page {
   public resizedModule: { module: Module; edge: Edge | Corner }[] = [];
 
   constructor(params: Record<string, string>) {
-    super(exerciceTemplate, "exercice-container", params);
-    this.content.style.height = "100vh";
+    super("", "exercice-container", params);
     this.grid = document.createElement("canvas");
+    this.grid.className = "exercice-grid";
     this.ctx = this.grid.getContext("2d");
     this.content.appendChild(this.grid);
 
@@ -49,6 +49,8 @@ export class Exercice extends Page {
     this.updateDimensions();
     this.drawGrid();
     this.addModules();
+    this.addHeader();
+    this.addMenu();
 
     window.addEventListener("resize", () => {
       this.clearCanvas();
@@ -67,6 +69,17 @@ export class Exercice extends Page {
       module.attachContainer(this);
       this.modules.set(this.modules.size, module);
     });
+  }
+
+  private addHeader() {
+    const header = new ExerciceHeader();
+
+    this.content.appendChild(header.content);
+  }
+
+  private addMenu() {
+    const menu = new ExerciceMenu();
+    this.content.appendChild(menu.content);
   }
 
   public removeModule(module: Module) {
@@ -110,8 +123,8 @@ export class Exercice extends Page {
     this.ctx.strokeStyle = "#fff";
 
     // Grille principale (10 divisions)
-    this.drawGridLines(10, 0.3);
-    this.drawGridLines(this.gridCellSize, 0.15);
+    // this.drawGridLines(25, "blue");
+    this.drawGridLines(this.gridCellSize, "red");
   }
 
   /** Efface le contenu du canvas */
@@ -122,25 +135,22 @@ export class Exercice extends Page {
     }
   }
 
-  private drawGridLines(divisions: number, lineWidth: number): void {
+  private drawGridLines(divisions: number, color: string): void {
     if (!this.grid) return;
     if (!this.ctx) return;
 
     const { width, height } = this.grid;
     this.ctx.beginPath();
-    this.ctx.lineWidth = lineWidth;
+    this.ctx.fillStyle = color;
+    const radius = 1;
 
-    for (let i = 1; i < divisions; i++) {
-      const y = (i * height) / divisions;
-      this.ctx.moveTo(0, y);
-      this.ctx.lineTo(width, y);
-
-      const x = (i * width) / divisions;
-      this.ctx.moveTo(x, 0);
-      this.ctx.lineTo(x, height);
+    for (let x = 0; x < width; x += width / divisions) {
+      for (let y = 0; y < height; y += height / divisions) {
+        this.ctx.beginPath();
+        this.ctx.arc(x, y, radius, 0, Math.PI * 2);
+        this.ctx.fill();
+      }
     }
-
-    this.ctx.stroke();
   }
 
   private listenMouseEvents() {

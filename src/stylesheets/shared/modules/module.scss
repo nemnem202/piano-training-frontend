@@ -1,0 +1,43 @@
+@use "../../variables" as *;
+
+.module {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  overflow: hidden;
+}
+
+.module-windowbar {
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  height: 0px;
+  display: flex;
+  overflow: hidden;
+  z-index: 20;
+  transition: $transition1;
+}
+
+.module-windowbar.visible {
+  height: 30px;
+}
+
+.module-move-zone {
+  flex: 1;
+  background-color: transparent;
+  background-color: $bg-color;
+}
+
+.module-close-button {
+  background-color: $bg-color;
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: $transition1;
+}
+
+.module-close-button:hover {
+  background-color: $warm;
+  fill: $bg-color;
+}

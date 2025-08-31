@@ -3,7 +3,6 @@
 .home-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 
 .banner {
@@ -38,4 +37,5 @@
 .playlist-card-container {
   display: flex;
   gap: $padding4;
+  height: 20rem;
 }
