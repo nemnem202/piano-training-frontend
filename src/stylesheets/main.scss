@@ -8,6 +8,12 @@
 @use "shared/components/nav";
 @use "shared/components/exerciceheader.scss";
 @use "shared/components/exerciceMenu.scss";
+@use "shared/components/knob.scss";
+@use "shared/components/synth/eveloppe.scss";
+@use "shared/components/synth/filter.scss";
+@use "shared/components/synth/oscillator.scss";
+@use "shared/components/synth/oscillator_params.scss";
 
 @use "shared/modules/module.scss";
 @use "shared/modules/piano.scss";
+@use "shared/modules/synthetizer.scss";

@@ -1,6 +1,5 @@
 import { Component } from "../../../core/abstract_classes/component";
 import template from "./knob.html?raw";
-import "./knob.css";
 import type { Position } from "../../../core/types/modules";
 
 export class Knob extends Component {
@@ -18,8 +17,8 @@ export class Knob extends Component {
     this.callback = callback;
     if (!this.knob) return;
 
-    this.content.style.height = "100%";
-    this.content.style.aspectRatio = "1/1";
+    // this.content.style.height = "100%";
+    // this.content.style.aspectRatio = "1/1";
 
     // Ajoute l'écouteur mousedown
     this.knob.addEventListener("mousedown", (e) => this.listenMouseDown(e));
@@ -31,6 +30,8 @@ export class Knob extends Component {
       y: e.clientY,
     };
 
+    if (this.knob) this.knob.classList.add("selected");
+
     // Définir les callbacks
 
     this.onMouseMove = (e: MouseEvent) => {
@@ -38,6 +39,7 @@ export class Knob extends Component {
     };
 
     this.onMouseUp = () => {
+      if (this.knob) this.knob.classList.remove("selected");
       if (this.onMouseMove) {
         window.removeEventListener("mousemove", this.onMouseMove);
         this.onMouseMove = null;

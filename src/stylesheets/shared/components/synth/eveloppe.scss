@@ -1,0 +1,25 @@
+@use "../../../variables" as *;
+
+.enveloppe-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: $padding1;
+  width: min-content;
+  box-sizing: border-box;
+}
+
+.enveloppe-canvas {
+  aspect-ratio: 2/1;
+  height: 10rem;
+  border: $border1;
+}
+
+.enveloppe-knob-container {
+  display: flex;
+  gap: 1rem;
+  height: 3rem;
+}
+
+.enveloppe-knob-container > div {
+}

@@ -1,13 +1,13 @@
-import { Component } from "../../../../core/abstract_classes/component";
-import { audioFileToFloat32Array } from "../../../../core/services/converters/sound-file-decoder/soundFileDecoder";
-import { waveFormFunctions } from "../../../../core/settings/synth";
-import type { Dimensions } from "../../../../core/types/modules";
-import type { Oscillator, Waveform } from "../../../../core/types/synth";
-import "./oscillator.css";
+import { Component } from "../../../core/abstract_classes/component";
+import { audioFileToFloat32Array } from "../../../core/services/converters/sound-file-decoder/soundFileDecoder";
+import { waveFormFunctions } from "../../../core/settings/synth";
+import type { Dimensions } from "../../../core/types/modules";
+import type { Oscillator, Waveform } from "../../../core/types/synth";
 
 export class OscillatorComponent extends Component {
   private fileDraggedInput = document.createElement("input");
-  private inputZone = document.createElement("div");
+
+  private importBtn = document.createElement("div");
   private canvas = document.createElement("canvas");
   private leftColumn = document.createElement("div");
   private rightColumn = document.createElement("div");
@@ -17,7 +17,6 @@ export class OscillatorComponent extends Component {
   private paddingSides = 5;
   private paddingTopBottom = 10;
 
-  // caches et état
   private dpr = Math.max(1, window.devicePixelRatio || 1);
   private ctx: CanvasRenderingContext2D | null = null;
   private thumbnails = new Map<Waveform, ImageBitmap | HTMLCanvasElement>();
@@ -27,13 +26,9 @@ export class OscillatorComponent extends Component {
   private start = 0;
   private end = 0;
 
-  // listeners stockés pour pouvoir les removeEventListener dans dispose()
   private bound = {
     onClickInput: (e: MouseEvent) => this.onClick(e),
-    onDragEnter: (e: DragEvent) => this.onDragEnter(e),
-    onDragOver: (e: DragEvent) => this.onDragOver(e),
-    onDragLeave: (e: DragEvent) => this.onDragLeave(e),
-    onDrop: (e: DragEvent) => this.onDrop(e),
+
     onFileChange: () => this.onFileDraggedInputChange(),
     onRightColumnClick: (e: MouseEvent) => this.onRightColumnClick(e),
   };
@@ -42,117 +37,43 @@ export class OscillatorComponent extends Component {
     super("div", "");
     this.oscillator = oscillator;
 
-    // layout container
-    this.content.style.display = "flex";
-    this.content.style.flexDirection = "column";
-    this.content.style.height = "100%";
-    this.content.style.gap = "10px";
-    this.content.style.alignItems = "center";
-
-    // left column
-    this.leftColumn.className = "lefColumn";
-    this.leftColumn.style.position = "relative";
-    this.leftColumn.style.flex = "1";
-
-    // right column
-    this.rightColumn.className = "rightColumn";
-    this.rightColumn.style.display = "flex";
-    this.rightColumn.style.gap = "3px";
-    this.rightColumn.style.height = "30%";
-    this.rightColumn.style.alignItems = "center";
+    this.content.className = "osc-container";
+    this.leftColumn.className = "osc-left-column";
+    this.rightColumn.className = "osc-right-column";
 
     this.content.appendChild(this.leftColumn);
     this.content.appendChild(this.rightColumn);
 
     this.initInput();
     this.listenInput();
+
+    this.initImportBtn();
+    this.listenImportBtn();
+
     this.initCanvas();
     this.listenCanvas();
-    this.createSelectableWaves(); // pré-génère thumbnails
-    this.scheduleDraw(); // premier dessin
+
+    this.createSelectableWaves();
+    this.scheduleDraw();
   }
 
-  // ---------- INPUT ----------
-
   private initInput() {
-    this.inputZone.className = "osc-input-zone";
-    // styles minimaux : préférer CSS, mais on garde l'essentiel inline pour compatibilité
-    Object.assign(this.inputZone.style, {
-      height: "100%",
-      aspectRatio: "3/1",
-      backgroundColor: "transparent",
-      position: "absolute",
-      transform: "translateX(-50%)",
-      top: "0px",
-      left: "0px",
-      zIndex: "15",
-      opacity: "0.5",
-    });
-
     this.fileDraggedInput.type = "file";
     this.fileDraggedInput.accept = ".wav, .mp3";
     this.fileDraggedInput.style.display = "none";
 
-    this.leftColumn.appendChild(this.inputZone);
     this.leftColumn.appendChild(this.fileDraggedInput);
   }
 
   private listenInput() {
-    this.inputZone.addEventListener("click", this.bound.onClickInput);
-    this.inputZone.addEventListener("dragenter", this.bound.onDragEnter);
-    this.inputZone.addEventListener("dragover", this.bound.onDragOver, { passive: false });
-    this.inputZone.addEventListener("dragleave", this.bound.onDragLeave);
-    this.inputZone.addEventListener("drop", this.bound.onDrop);
-    this.inputZone.addEventListener(
-      "wheel",
-      (e: WheelEvent) => {
-        e.preventDefault();
-        this.canvas.dispatchEvent(
-          new WheelEvent("wheel", {
-            deltaX: e.deltaX,
-            deltaY: e.deltaY,
-            deltaMode: e.deltaMode,
-            bubbles: true,
-            cancelable: true,
-          })
-        );
-      },
-      { passive: false }
-    );
     this.fileDraggedInput.addEventListener("change", this.bound.onFileChange);
-    // délégation pour miniatures
+
     this.rightColumn.addEventListener("click", this.bound.onRightColumnClick);
   }
 
   private onClick(e: MouseEvent) {
     e.stopPropagation();
     this.fileDraggedInput.click();
-  }
-
-  private onDragEnter(e: DragEvent) {
-    e.preventDefault();
-    e.stopPropagation();
-    this.inputZone.classList.add("dragover");
-  }
-
-  private onDragOver(e: DragEvent) {
-    e.preventDefault();
-    e.stopPropagation();
-    // passive:false above ensures preventDefault works
-  }
-
-  private onDragLeave(e: DragEvent) {
-    e.preventDefault();
-    e.stopPropagation();
-    this.inputZone.classList.remove("dragover");
-  }
-
-  private onDrop(e: DragEvent) {
-    e.preventDefault();
-    e.stopPropagation();
-    this.inputZone.classList.remove("dragover");
-    const file = e.dataTransfer?.files?.[0];
-    if (file) this.getFile(file);
   }
 
   private onFileDraggedInputChange() {
@@ -172,36 +93,30 @@ export class OscillatorComponent extends Component {
     }
   }
 
-  // ---------- CANVAS ----------
+  private initImportBtn() {
+    this.importBtn.className = " button1";
+    this.importBtn.innerHTML =
+      '<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e3e3e3"><path d="M168-192q-32 0-52-21.16t-20-50.88v-432.24Q96-726 116-747t52-21h216l96 96h313q31 0 50.5 21t21.5 51H451l-96-96H168v432l78-264h690l-85 285q-8 23-21 37t-38 14H168Zm75-72h538l59-192H300l-57 192Zm0 0 57-192-57 192Zm-75-336v-96 96Z"/></svg>';
+    this.rightColumn.appendChild(this.importBtn);
+  }
+
+  private listenImportBtn() {
+    this.importBtn.addEventListener("click", this.bound.onClickInput);
+  }
 
   private initCanvas() {
-    // positionne le canvas principal (leftColumn)
     this.leftColumn.appendChild(this.canvas);
-
-    // CSS logical sizes (pour layout)
+    this.canvas.className = "osc-main-preview-canvas";
     const { width, height } = this.viewDimensions;
-    this.canvas.style.width = `${width}px`;
-    this.canvas.style.height = `${height}px`;
-    this.canvas.style.backgroundColor = "#111";
-    this.canvas.style.position = "absolute";
-    this.canvas.style.top = "0px";
-    this.canvas.style.left = "0px";
-    this.canvas.style.transform = "translateX(-50%)";
-    this.canvas.style.aspectRatio = "3/1";
-    this.canvas.style.height = "100%";
-
-    // set réel pixel buffer en fonction du DPR
     this.canvas.width = Math.floor(width * this.dpr);
     this.canvas.height = Math.floor(height * this.dpr);
 
-    // scale context to DPR so drawing uses logical coordinates
     this.ctx = this.canvas.getContext("2d");
     if (this.ctx) {
       this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     }
   }
 
-  // schedule draw via requestAnimationFrame (debounced)
   private scheduleDraw() {
     if (this.drawRequested) return;
     this.drawRequested = true;
@@ -251,18 +166,14 @@ export class OscillatorComponent extends Component {
   private draw() {
     if (!this.ctx) return;
 
-    // clear in logical coordinates
     const { width, height } = this.viewDimensions;
     this.ctx.clearRect(0, 0, width, height);
 
-    // styles généraux
     this.ctx.save();
     this.ctx.strokeStyle = "#444";
     this.ctx.lineWidth = 1;
 
-    // si sampler, on pourrait dessiner l'enveloppe du sample.
     if (this.oscillator.type === "waveform" && this.oscillator.waveform) {
-      // draw waveform on main canvas (lineWidth 2)
       this.drawWave(this.ctx, this.oscillator.waveform, width, height, 2);
     } else if (this.oscillator.type === "sampler" && this.oscillator.sample) {
       this.drawSample(
@@ -277,7 +188,6 @@ export class OscillatorComponent extends Component {
     this.ctx.restore();
   }
 
-  // dessine une forme dans le contexte fourni (attend que ctx soit déjà transformé pour DPR)
   private drawWave(
     ctx: CanvasRenderingContext2D,
     wave: Waveform,
@@ -290,7 +200,7 @@ export class OscillatorComponent extends Component {
     const func = waveFormFunctions[wave];
     const amplitude = (height - this.paddingTopBottom * 2) / 2;
 
-    ctx.strokeStyle = "#0f0";
+    ctx.strokeStyle = "#ff7d00";
     ctx.lineWidth = lineWidth;
     ctx.beginPath();
 
@@ -304,8 +214,6 @@ export class OscillatorComponent extends Component {
     }
     ctx.stroke();
   }
-
-  // dessine en fonction du sample
 
   private drawSample(
     ctx: CanvasRenderingContext2D,
@@ -328,7 +236,7 @@ export class OscillatorComponent extends Component {
     const centerY = height / 2;
     const amplitude = ((height - this.paddingTopBottom * 2) / 2) * zoomY;
 
-    ctx.strokeStyle = "#0f0";
+    ctx.strokeStyle = "#ff7d00";
     ctx.lineWidth = 2;
     ctx.beginPath();
 
@@ -337,7 +245,7 @@ export class OscillatorComponent extends Component {
 
       const xPos = i + this.paddingSides;
       const yPos = centerY + y;
-      // console.log(xPos, yPos);
+
       if (i === 0) ctx.moveTo(xPos, yPos);
       ctx.lineTo(xPos, yPos);
     }
@@ -346,45 +254,27 @@ export class OscillatorComponent extends Component {
     console.log("done");
   }
 
-  // ---------- MINIATURES / SELECTABLE WAVES ----------
-
   private async createSelectableWaves() {
-    // create elements via fragment for perf
     const frag = document.createDocumentFragment();
 
     const waveKeys = Object.keys(waveFormFunctions) as Waveform[];
-    const thumbWidth = Math.floor(this.viewDimensions.width / 2); // logique
-    const thumbHeight = Math.floor(this.viewDimensions.height / 2);
+    const thumbWidth = Math.floor(this.viewDimensions.width / 4);
+    const thumbHeight = Math.floor(this.viewDimensions.height / 4);
 
-    // create thumbnails sequentially (could be parallelized if besoin)
     for (const wave of waveKeys) {
       const thumbCanvas = document.createElement("canvas");
-      // logical CSS size
-      // thumbCanvas.style.width = `${thumbWidth}px`;
-      // thumbCanvas.style.height = `${thumbHeight}px`;
-      thumbCanvas.style.backgroundColor = "#111";
-      thumbCanvas.style.aspectRatio = "2/1";
-      thumbCanvas.style.height = "100%";
+      thumbCanvas.className = "osc-little-canvas";
 
-      // real pixel buffer for crispness
       thumbCanvas.width = Math.floor(thumbWidth * this.dpr);
       thumbCanvas.height = Math.floor(thumbHeight * this.dpr);
       const tctx = thumbCanvas.getContext("2d");
       if (!tctx) continue;
 
-      // scale for DPR
       tctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
 
-      // draw waveform bigger line to be visible
-      this.drawWave(tctx, wave, thumbWidth, thumbHeight, 2);
+      this.drawWave(tctx, wave, thumbWidth, thumbHeight, 1);
 
-      // store a bitmap if available (faster draws later)
       try {
-        // createImageBitmap expects a BlobSource; canvas is acceptable
-        // We try to create a bitmap to keep it fast on draw.
-        // Not all environments support createImageBitmap(canvas), so fallback to canvas element itself.
-        // Note: createImageBitmap is async, we can await and cache the result.
-        // We store either an ImageBitmap or the canvas element.
         if ((window as any).createImageBitmap) {
           const bmp = await (window as any).createImageBitmap(thumbCanvas);
           this.thumbnails.set(wave, bmp);
@@ -395,7 +285,6 @@ export class OscillatorComponent extends Component {
         this.thumbnails.set(wave, thumbCanvas);
       }
 
-      // attach dataset for delegation
       thumbCanvas.dataset.wave = String(wave);
       frag.appendChild(thumbCanvas);
     }
@@ -403,11 +292,10 @@ export class OscillatorComponent extends Component {
     this.rightColumn.appendChild(frag);
   }
 
-  // délégation pour cliquer sur les miniatures
   private onRightColumnClick(e: MouseEvent) {
     const target = e.target as HTMLElement | null;
     if (!target) return;
-    // remonte jusqu'au canvas avec dataset.wave
+
     let el: HTMLElement | null = target;
     while (el && el !== this.rightColumn) {
       if (el instanceof HTMLCanvasElement && el.dataset.wave) {
@@ -424,32 +312,20 @@ export class OscillatorComponent extends Component {
     this.oscillator.waveform = wave;
     this.oscillator.type = "waveform";
     this.oscillator.sample = undefined;
-    // redraw main canvas (will use drawWave)
+
     this.scheduleDraw();
   }
 
-  // ---------- UTIL / CLEANUP ----------
-
-  // call this when you remove the component to free resources
   public dispose() {
-    // remove listeners
-    this.inputZone.removeEventListener("click", this.bound.onClickInput);
-    this.inputZone.removeEventListener("dragenter", this.bound.onDragEnter);
-    this.inputZone.removeEventListener("dragover", this.bound.onDragOver);
-    this.inputZone.removeEventListener("dragleave", this.bound.onDragLeave);
-    this.inputZone.removeEventListener("drop", this.bound.onDrop);
     this.fileDraggedInput.removeEventListener("change", this.bound.onFileChange);
     this.rightColumn.removeEventListener("click", this.bound.onRightColumnClick);
+    this.importBtn.removeEventListener("click", this.bound.onClickInput);
 
-    // revoke image bitmaps if possible
     for (const val of this.thumbnails.values()) {
-      // ImageBitmap has close() in modern browsers
       if ((val as ImageBitmap).close) {
         try {
           (val as ImageBitmap).close();
-        } catch {
-          // ignore
-        }
+        } catch {}
       }
     }
     this.thumbnails.clear();

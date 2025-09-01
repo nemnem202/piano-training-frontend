@@ -4,8 +4,9 @@ import type { ExerciceStore } from "../../core/services/stores/exerciceStore";
 import { defaultOscillator } from "../../core/settings/synth";
 import type { Bounds } from "../../core/types/modules";
 import type { Oscillator, SynthConfig } from "../../core/types/synth";
-import { EnveloppeComponent } from "../components/synth/enveloppe/eveloppe";
-import { OscillatorComponent } from "../components/synth/oscillator/oscillator";
+import { EnveloppeComponent } from "../components/synth/eveloppe";
+import { OscillatorComponent } from "../components/synth/oscillator";
+import { OscillatorParams } from "../components/synth/params";
 
 export class SynthetizerModule extends Module {
   private localMainContainer = document.createElement("div");
@@ -16,19 +17,21 @@ export class SynthetizerModule extends Module {
 
   constructor(bounds: Bounds, store: ExerciceStore) {
     super(bounds, store);
-    this.setUpSynthApi();
+
     this.config = store.getState("synthConfig") as SynthConfig;
-    this.content.style.display = "flex";
-    this.content.style.flexDirection = "column";
-    this.content.style.height = "100%";
+    this.content.classList.add("synth-module");
+
+    this.setUpSynthApi();
     this.createHeader();
     this.createNav();
     this.createLocalMainContainer();
     this.createOscillatorColumn();
     this.createOscillatorRowButton();
+
     for (const osc of this.config.oscillators) {
       this.newRow(osc);
     }
+
     this.filterColumn();
   }
 
@@ -42,45 +45,38 @@ export class SynthetizerModule extends Module {
   }
 
   private createLocalMainContainer() {
-    this.localMainContainer.className = "main-container";
+    this.localMainContainer.className = "synth-main-container";
     this.content.appendChild(this.localMainContainer);
-    this.localMainContainer.style.flex = "1";
-    this.localMainContainer.style.backgroundColor = "yellow";
-    this.localMainContainer.style.display = "flex";
-    this.localMainContainer.style.overflow = "hidden";
   }
 
   private createHeader() {
     const header = document.createElement("div");
-    header.style.backgroundColor = "transparent";
-    header.style.height = `${this.windowBarHeight}px`;
-    header.style.width = "100%";
+    header.className = "synth-header";
     this.content.appendChild(header);
   }
 
   private createNav() {
-    const navContainer = document.createElement("div");
-    navContainer.style.backgroundColor = "green";
-    navContainer.style.width = "100%";
-    navContainer.style.display = "flex";
     const nav = document.createElement("div");
-    const buttonMain = document.createElement("button");
-    buttonMain.innerText = "main";
-    const buttonMixer = document.createElement("button");
-    buttonMixer.innerText = "mixer";
+    nav.className = "synth-nav";
+
+    const buttonMain = document.createElement("div");
+    buttonMain.innerText = "Main";
+    buttonMain.className = "synth-module-nav-button";
+
+    buttonMain.classList.add("active");
+
+    const buttonMixer = document.createElement("div");
+    buttonMixer.innerText = "Mixer";
+    buttonMixer.className = "synth-module-nav-button";
+
     nav.appendChild(buttonMain);
     nav.appendChild(buttonMixer);
-    navContainer.appendChild(nav);
-    this.content.appendChild(navContainer);
+    this.windowBar.appendChild(nav);
   }
 
   private createOscillatorColumn() {
     this.localMainContainer.appendChild(this.oscillatorColumn);
-    this.oscillatorColumn.style.flex = "1";
-    this.oscillatorColumn.className = "oscillator-column";
-    this.oscillatorColumn.style.display = "flex";
-    this.oscillatorColumn.style.flexDirection = "column";
-    this.oscillatorColumn.style.overflowY = "auto";
+    this.oscillatorColumn.className = "syth-module-osc-col";
   }
 
   private filterColumn() {
@@ -93,13 +89,7 @@ export class SynthetizerModule extends Module {
     filterColumn.appendChild(filterOverview);
     filterColumn.appendChild(filterParams);
 
-    filterColumn.style.height = "100%";
-    filterColumn.style.width = "30%";
-    filterColumn.style.border = "1px solid black";
-    filterColumn.style.boxSizing = "border-box";
-    filterColumn.style.display = "flex";
-    filterColumn.style.flexDirection = "column";
-    filterColumn.style.overflowY = "auto";
+    filterColumn.className = "synth-module-filter-col";
 
     this.localMainContainer.appendChild(filterColumn);
   }
@@ -111,31 +101,26 @@ export class SynthetizerModule extends Module {
     const oscillator = this.createOscillator(osc);
     const enveloppe = this.createEnveloppe(osc);
     const closeButton = this.createRemoveOscillatorButton(row.id);
-    const filterLink = this.createFilterLink();
+    const filterLink = this.createOscillatorParams();
 
     row.appendChild(closeButton);
     row.appendChild(oscillator);
     row.appendChild(enveloppe);
     row.appendChild(filterLink);
 
-    row.style.width = "100%";
-    row.style.border = "1px solid black";
-    row.style.boxSizing = "border-box";
-    row.style.display = "flex";
-    row.style.minHeight = "100px";
+    row.className = "synth-module-osc-row";
+
     this.oscillatorColumn.appendChild(row);
   }
 
   private createOscillatorRowButton() {
     const rowButtonContainer = document.createElement("div");
-    rowButtonContainer.style.display = "flex";
-    rowButtonContainer.style.alignItems = "center";
-    rowButtonContainer.style.justifyContent = "center";
-    rowButtonContainer.style.order = "999";
-    rowButtonContainer.style.padding = "20px";
+    rowButtonContainer.className = "synth-module-new-row-button-container";
 
-    const button = document.createElement("button");
-    button.innerText = "+";
+    const button = document.createElement("div");
+    button.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e3e3e3"><path d="M444-444H240v-72h204v-204h72v204h204v72H516v204h-72v-204Z"/></svg>`;
+    button.className = "button1";
 
     button.addEventListener("click", () => this.newRow(defaultOscillator));
     rowButtonContainer.appendChild(button);
@@ -149,45 +134,33 @@ export class SynthetizerModule extends Module {
 
   private createHeaderFilter(): HTMLDivElement {
     const headerFilter = document.createElement("div");
+    headerFilter.className = "synth-module-header-filter";
     headerFilter.innerText = "header filter";
-    headerFilter.style.border = "1px solid black";
-    headerFilter.style.boxSizing = "border-box";
-    headerFilter.style.height = "15%";
-    headerFilter.style.minHeight = "40px";
     return headerFilter;
   }
 
   private createFilterParams(): HTMLDivElement {
     const filterParams = document.createElement("div");
+    filterParams.className = "synth-module-filter-params";
     filterParams.innerText = "filter params";
-    filterParams.style.border = "1px solid black";
-    filterParams.style.boxSizing = "border-box";
-    filterParams.style.flex = "1";
-    filterParams.style.minHeight = "100px";
+
     return filterParams;
   }
 
   private createFilterOverview(): HTMLDivElement {
     const filterOverview = document.createElement("div");
     filterOverview.innerText = "filter overview";
-    filterOverview.style.border = "1px solid black";
-    filterOverview.style.boxSizing = "border-box";
-    filterOverview.style.flex = "1";
-    filterOverview.style.minHeight = "100px";
+    filterOverview.className = "synth-module-filter-overview";
     return filterOverview;
   }
 
   private createRemoveOscillatorButton(id: string): HTMLDivElement {
     const buttonContainer = document.createElement("div");
+    buttonContainer.className = "synth-module-remove-oscillator-btn-container";
 
-    buttonContainer.style.height = "100%";
-    buttonContainer.style.width = "50px";
-    buttonContainer.style.display = "flex";
-    buttonContainer.style.alignItems = "center";
-    buttonContainer.style.justifyContent = "center";
-
-    const button = document.createElement("button");
-    button.innerText = "-";
+    const button = document.createElement("div");
+    button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e3e3e3"><path d="m291-240-51-51 189-189-189-189 51-51 189 189 189-189 51 51-189 189 189 189-51 51-189-189-189 189Z"/></svg>`;
+    button.className = "button1";
     button.addEventListener("click", () => {
       this.removeOscillatorRow(id);
     });
@@ -198,9 +171,7 @@ export class SynthetizerModule extends Module {
 
   private createOscillator(osc: Oscillator): HTMLDivElement {
     const oscillator = document.createElement("div");
-    oscillator.style.border = "1px solid black";
-    oscillator.style.boxSizing = "border-box";
-    oscillator.style.flex = "1";
+    oscillator.className = "synth-module-osc-container";
 
     const oscillatorComponent = new OscillatorComponent(osc);
     oscillator.appendChild(oscillatorComponent.content);
@@ -209,23 +180,16 @@ export class SynthetizerModule extends Module {
 
   private createEnveloppe(osc: Oscillator): HTMLDivElement {
     const enveloppe = document.createElement("div");
-    enveloppe.style.border = "1px solid black";
-    enveloppe.style.boxSizing = "border-box";
-    enveloppe.style.flex = "1";
+    enveloppe.className = "synth-module-env-container";
 
     const enveloppeComponent = new EnveloppeComponent(osc);
     enveloppe.appendChild(enveloppeComponent.content);
     return enveloppe;
   }
 
-  private createFilterLink(): HTMLDivElement {
-    const container = document.createElement("div");
+  private createOscillatorParams(): HTMLElement {
+    const container = new OscillatorParams();
 
-    container.style.height = "100%";
-    container.style.width = "50px";
-
-    container.innerText = "links";
-
-    return container;
+    return container.content;
   }
 }

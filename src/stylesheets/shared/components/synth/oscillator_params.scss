@@ -1,0 +1,24 @@
+@use "../../../variables" as *;
+
+.oscillator-params-container {
+  border: $border1;
+  padding: $padding1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.oscillator-param-item {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  gap: $padding1;
+}
+
+.oscillator-param-item .knob {
+  width: 3rem;
+}
+
+.oscillator-param-text {
+  font: $small-font;
+}

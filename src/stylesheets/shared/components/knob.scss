@@ -1,0 +1,25 @@
+@use "../../variables" as *;
+
+.knob {
+  border-radius: 100%;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity $transition-lenght1;
+  opacity: 0.5;
+
+  svg {
+    width: 100%;
+    height: 100%;
+    fill: transparent;
+    stroke: $highlight;
+    stroke-width: 0.4rem;
+  }
+}
+
+.knob:hover,
+.knob.selected {
+  opacity: 1;
+}

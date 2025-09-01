@@ -14,7 +14,7 @@ export abstract class Module extends Component {
 
   private moveStrategy: MoveStrategy = new FreeMoveStrategy();
   private resizeStrategy: ResizeStrategy = new FreeResizeStrategy();
-  private windowBar: HTMLDivElement;
+  protected windowBar: HTMLDivElement;
 
   protected windowBarHeight = 30;
 

@@ -1,0 +1,147 @@
+@use "../../variables" as *;
+
+.synth-module {
+  flex-direction: column;
+  display: flex;
+  color: $text;
+}
+
+.synth-module .synth-main-container {
+  flex: 1;
+  background-color: $bg-color;
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  justify-content: space-between;
+}
+
+.synth-header {
+  background-color: $bg-color;
+  height: 30px;
+  width: 100%;
+}
+
+.synth-nav-container {
+  background-color: $accent;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.synth-nav {
+  display: flex;
+  width: "fit-content";
+  gap: $padding1;
+  align-items: center;
+  color: $text;
+}
+
+.synth-module-nav-button {
+  font: $heading-font;
+  color: $text;
+  font-size: $text-xs;
+}
+
+.synth-module-nav-button.active {
+  background-color: $highlight;
+}
+
+.syth-module-osc-col {
+  display: flex;
+  flex-direction: column;
+  // width: 70%;
+  overflow: scroll;
+  height: 100%;
+  gap: $padding1;
+}
+
+.synth-module-filter-col {
+  height: 100%;
+  // width: 30%;
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+}
+
+.syth-module-osc-col::-webkit-scrollbar,
+.synth-module-filter-col::-webkit-scrollbar,
+.syth-module-osc-col::-webkit-scrollbar-corner,
+.synth-module-filter-col::-webkit-scrollbar-corner {
+  background-color: $bg-color;
+  width: 10px;
+  height: 10px;
+}
+
+.syth-module-osc-col::-webkit-scrollbar-thumb,
+.synth-module-filter-col::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.5);
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+.syth-module-osc-col::-webkit-scrollbar-thumb:hover,
+.synth-module-filter-col::-webkit-scrollbar-thumb:hover {
+  background: $accent;
+  border: 1px solid transparent;
+  background-clip: content-box;
+}
+
+.synth-module-osc-row {
+  width: 100%;
+  // border: $border1;
+  display: flex;
+}
+
+.synth-module-new-row-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  order: 999;
+}
+
+.synth-module-header-filter {
+  border: $border1;
+  height: 15%;
+}
+
+.synth-module-filter-params {
+  border: $border1;
+  flex: 1;
+}
+
+.synth-module-filter-overview {
+  border: $border1;
+  flex: 1;
+}
+
+.synth-module-remove-oscillator-btn-container {
+  height: 100%;
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.synth-module-osc-container {
+  border: $border1;
+  height: min-content;
+}
+
+.synth-module-env-container {
+  border: $border1;
+  height: min-content;
+}
+
+// .synth-module-oscillator-btn {
+//   border: $border1;
+//   padding: 0 $padding1;
+//   transition: $transition1;
+// }
+
+// .synth-module-oscillator-btn:hover {
+//   background-color: $accent;
+
+//   svg {
+//     fill: $bg-color;
+//   }
+// }
