@@ -135,7 +135,9 @@ button {
   border-radius: $border-radius1;
 }
 
-.button1 {
+.button1,
+.button1.selected:hover {
+  background-color: transparent;
   border: $border1;
   padding: 0 $padding1;
   transition: $transition1;
@@ -143,15 +145,17 @@ button {
   align-items: center;
   justify-content: center;
   text-align: center;
-}
+  color: $text;
 
-.button1 svg {
-  fill: $text;
+  svg {
+    fill: $text;
+  }
 }
 
 .button1:hover,
 .button1.selected {
   background-color: $accent;
+  border-color: $accent;
   color: $bg-color;
   svg {
     fill: $bg-color;

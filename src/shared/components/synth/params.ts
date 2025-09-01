@@ -92,5 +92,20 @@ export class OscillatorParams extends Component {
     filterContainer.appendChild(btnContainer);
 
     this.content.appendChild(filterContainer);
+
+    btn_a.addEventListener("click", () => {
+      if (btn_a.classList.contains("selected")) {
+        btn_a.classList.remove("selected");
+      } else {
+        btn_a.classList.add("selected");
+      }
+    });
+    btn_b.addEventListener("click", () => {
+      if (btn_b.classList.contains("selected")) {
+        btn_b.classList.remove("selected");
+      } else {
+        btn_b.classList.add("selected");
+      }
+    });
   }
 }
