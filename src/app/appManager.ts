@@ -66,6 +66,10 @@ export class AppManager {
       this.footer.content.remove();
       this.footer = null;
     }
+
+    if (this.header && route.header) {
+      this.header.navBar.updatePage(route.path);
+    }
   }
 
   public showLoadingScreen() {

@@ -70,6 +70,18 @@ $transition-lenght1: 0.2s cubic-bezier(0.94, -0.01, 0.99, 0.04);
   box-sizing: border-box;
 }
 
+html {
+  background-color: black;
+}
+
+html:not(:has(.exercice-container)) {
+  overflow-y: scroll;
+}
+
+html:has(.exercice-container) {
+  overflow: hidden;
+}
+
 html,
 body {
   margin: 0;
@@ -80,9 +92,25 @@ body {
 }
 
 body {
-  background: repeating-linear-gradient(to bottom, $bg-color 0px, $warm 2000px, $bg-color 4000px);
   display: flex;
   flex-direction: column;
+}
+
+body,
+body::-webkit-scrollbar {
+  background: repeating-linear-gradient(to bottom, $bg-color 0px, $warm 2000px, $bg-color 4000px);
+}
+
+body::-webkit-scrollbar {
+  width: $padding2;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: $bg-color2;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background-color: $accent;
 }
 
 #app {
@@ -108,7 +136,8 @@ h1 {
 }
 
 .accent {
-  color: $accent;
+  color: $accent !important;
+  opacity: 1 !important;
 }
 
 .highlight {

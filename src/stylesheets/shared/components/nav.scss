@@ -8,8 +8,6 @@
 .header-navbar div {
   font: $medium-default-font;
   cursor: pointer;
-}
-
-.header-navbar .accent {
-  text-decoration: underline;
+  color: $text;
+  opacity: $opacity1;
 }

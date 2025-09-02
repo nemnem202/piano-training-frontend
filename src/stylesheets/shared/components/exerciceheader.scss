@@ -3,7 +3,7 @@
 .exercie-header-nav {
   position: absolute;
   top: 0;
-  right: 0;
+  right: $padding2;
   display: flex;
   width: min-content;
   padding: $padding2 $padding3;

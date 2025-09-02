@@ -5,7 +5,8 @@ import { Logo } from "../logo/logo";
 import { Nav } from "../nav/nav";
 
 export class Header extends Component {
-  router: Router | null = null;
+  private router: Router | null = null;
+  navBar: Nav;
   constructor() {
     super("header", "");
     const router = AppManager.getInstance().router;
@@ -15,7 +16,7 @@ export class Header extends Component {
     this.content.appendChild(logo.content);
     logo.content.addEventListener("click", () => this.router?.redirect(""));
 
-    const navBar = new Nav();
-    this.content.appendChild(navBar.content);
+    this.navBar = new Nav();
+    this.content.appendChild(this.navBar.content);
   }
 }

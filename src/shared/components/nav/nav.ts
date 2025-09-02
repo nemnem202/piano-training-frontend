@@ -2,6 +2,8 @@ import { AppManager } from "../../../app/appManager";
 import { Component } from "../../../core/abstract_classes/component";
 
 export class Nav extends Component {
+  private tags = ["", "SETTINGS", "NEW"];
+  private elements = this.tags.map(() => document.createElement("div"));
   constructor() {
     super("nav", "");
 
@@ -9,23 +11,33 @@ export class Nav extends Component {
 
     this.content.className = "header-navbar";
 
-    const home = document.createElement("div");
-    const settings = document.createElement("div");
-    const newMod = document.createElement("div");
+    const configs: { el: HTMLDivElement; text: string; route: string }[] = [
+      { el: this.elements[0], text: "Home", route: "" },
+      { el: this.elements[1], text: "Settings", route: "settings" },
+      { el: this.elements[2], text: "New", route: "new" },
+    ];
 
-    home.innerText = "Home";
-    settings.innerText = "Settings";
-    newMod.innerText = "New";
+    configs.forEach(({ el, text, route }) => {
+      el.innerText = text;
+      el.addEventListener("click", () => router?.redirect(route));
+      this.content.appendChild(el);
+    });
+  }
 
-    home.className = "accent";
-    settings.className = newMod.className = "secondary";
-
-    this.content.appendChild(home);
-    this.content.appendChild(settings);
-    this.content.appendChild(newMod);
-
-    home.addEventListener("click", () => router?.redirect(""));
-    settings.addEventListener("click", () => router?.redirect("settings"));
-    newMod.addEventListener("click", () => router?.redirect("new"));
+  updatePage(pageTitle: string) {
+    if (this.tags.includes(pageTitle.toUpperCase())) {
+      const index = this.tags.indexOf(pageTitle.toUpperCase());
+      this.elements.forEach((el, elIndex) => {
+        if (index === elIndex) {
+          el.className = "accent";
+        } else {
+          el.className = "secondary";
+        }
+      });
+    } else {
+      this.elements.forEach((e) => {
+        e.className = "secondary";
+      });
+    }
   }
 }
