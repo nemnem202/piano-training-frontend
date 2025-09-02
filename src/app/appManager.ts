@@ -1,6 +1,7 @@
 // appManager.ts
 import { Page } from "../core/abstract_classes/page";
 import type { Route } from "../core/types/routes";
+import { LoadingPage } from "../pages/loading/loading";
 import { Footer } from "../shared/components/footer/footer";
 import { Header } from "../shared/components/header/header";
 import { Router } from "./router";
@@ -40,9 +41,13 @@ export class AppManager {
 
     this.handleHeaderAndFooter(route);
 
+    this.showPage(this.currentPage);
+  }
+
+  private showPage(page: Page | null) {
     this.app.innerHTML = "";
 
-    if (this.currentPage) this.app.appendChild(this.currentPage.content);
+    if (page) this.app.appendChild(page.content);
   }
 
   private handleHeaderAndFooter(route: Route) {
@@ -61,5 +66,9 @@ export class AppManager {
       this.footer.content.remove();
       this.footer = null;
     }
+  }
+
+  public showLoadingScreen() {
+    this.showPage(new LoadingPage());
   }
 }

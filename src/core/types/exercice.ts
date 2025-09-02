@@ -1,10 +1,10 @@
 import type { noteDTO } from "./config";
-import type { ChordDTO } from "./playlist";
+import type { Chord } from "./playlist";
 import type { SynthConfig } from "./synth";
 
 export type ExerciceStoreState = {
   synthConfig: SynthConfig;
-  chords: ChordDTO[];
+  chords: Chord[];
   currentChord: number;
   beat: number;
   measure: number;

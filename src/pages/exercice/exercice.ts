@@ -1,10 +1,11 @@
+import { AppManager } from "../../app/appManager";
 import type { Module } from "../../core/abstract_classes/module";
 import { Page } from "../../core/abstract_classes/page";
 import { PlaylistDAO } from "../../core/services/data/playlistDAO";
 import { ExerciceStore } from "../../core/services/stores/exerciceStore";
 import { moduleRegistry } from "../../core/settings/moduleRegistry";
 import type { Corner, Dimensions, Edge } from "../../core/types/modules";
-import type { SongDTO } from "../../core/types/playlist";
+import type { Song } from "../../core/types/playlist";
 import { ExerciceHeader } from "../../shared/components/exerciceHeader/exerciceHeader";
 import { ExerciceMenu } from "../../shared/components/exerciceMenu/exerciceMenu";
 
@@ -12,7 +13,7 @@ export class Exercice extends Page {
   private store = new ExerciceStore();
   private grid: HTMLCanvasElement | undefined;
   private ctx: CanvasRenderingContext2D | null = null;
-  private song: SongDTO | undefined;
+  private song: Song | undefined;
   public gridCellSize = 30;
   public readonly magnetism: boolean | undefined = true;
   public appDimensions: Dimensions = { width: 0, height: 0 };
@@ -38,13 +39,17 @@ export class Exercice extends Page {
 
   /** Initialise les dimensions et le rendu du canvas */
   private async init() {
-    if (!this.params || !this.params.title || !this.params.songTitle) return;
+    if (!this.params || !this.params.id) {
+      AppManager.getInstance().router?.redirect("not-found");
+      return;
+    }
 
-    const playlist = await PlaylistDAO.get(this.params.title);
+    this.song = await PlaylistDAO.getSong(this.params.id);
 
-    if (!playlist) return;
-    this.song = playlist.songs.find((s) => s.title === this.params?.songTitle);
-    if (!this.song) return;
+    if (!this.song) {
+      AppManager.getInstance().router?.redirect("not-found");
+      return;
+    }
 
     this.updateDimensions();
     this.drawGrid();

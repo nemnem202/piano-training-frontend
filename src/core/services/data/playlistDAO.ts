@@ -1,7 +1,6 @@
 import type { DBTypes } from "../../types/data";
-import type { PlaylistDTO, PlaylistTag } from "../../types/playlist";
-import type { Playlist } from "../converters/ireal-decoder/decoder";
 import { openDB, type IDBPDatabase } from "idb";
+import type { Playlist, PlaylistDTO, PlaylistTag, Song } from "../../types/playlist";
 
 export class PlaylistDAO {
   private static dbInstance: IDBPDatabase<DBTypes> | null = null;
@@ -14,7 +13,10 @@ export class PlaylistDAO {
       PlaylistDAO.dbInstance = await openDB("piano-trainingDB", PlaylistDAO.version, {
         upgrade(db) {
           if (!db.objectStoreNames.contains("playlists")) {
-            db.createObjectStore("playlists", { keyPath: "title" });
+            db.createObjectStore("playlists");
+          }
+          if (!db.objectStoreNames.contains("songs")) {
+            db.createObjectStore("songs");
           }
         },
       });
@@ -25,25 +27,27 @@ export class PlaylistDAO {
   public static async create(playlist: Playlist): Promise<string> {
     const db = await PlaylistDAO.getDB();
 
-    // Étape 1 : ajoute l'objet sans id, IndexedDB génère le newId
-    const id = await db.add("playlists", {
-      title: playlist.title || "",
-      songs: playlist.songs,
+    const songs: string[] = [];
+
+    for (const song of playlist.songs) {
+      await db.add("songs", song, song.id);
+      songs.push(song.id);
+    }
+
+    const playlistDTO: PlaylistDTO = {
       difficulty: playlist.difficulty,
+      id: playlist.id,
       tag: playlist.tag,
-    });
+      title: playlist.tag,
+      songsIDs: songs,
+    };
 
-    return id;
+    return await db.add("playlists", playlistDTO, playlist.id);
   }
 
-  public static async get(title: string): Promise<PlaylistDTO | undefined> {
+  public static async getPLaylist(id: string): Promise<PlaylistDTO | undefined> {
     const db = await PlaylistDAO.getDB();
-    return await db.get("playlists", title);
-  }
-
-  public static async getAll(): Promise<PlaylistDTO[]> {
-    const db = await PlaylistDAO.getDB();
-    return await db.getAll("playlists");
+    return await db.get("playlists", id);
   }
 
   public static async getAllWithTag(tag: PlaylistTag): Promise<PlaylistDTO[]> {
@@ -52,19 +56,18 @@ export class PlaylistDAO {
     return playlists.filter((p) => p.tag === tag);
   }
 
-  public static async update(playlist: Playlist): Promise<string> {
-    const playlistDto: PlaylistDTO = {
-      title: playlist.title || "",
-      songs: playlist.songs,
-      difficulty: playlist.difficulty,
-      tag: playlist.tag,
-    };
+  public static async getSong(id: string): Promise<Song | undefined> {
     const db = await PlaylistDAO.getDB();
-    return await db.put("playlists", playlistDto);
+    return await db.get("songs", id);
   }
 
-  public static async delete(title: string): Promise<void> {
-    const db = await PlaylistDAO.getDB();
-    return await db.delete("playlists", title);
+  public static async getAllSongsOfAPlaylist(playlistDTO: PlaylistDTO): Promise<Song[]> {
+    const songs = [];
+    for (const id of playlistDTO.songsIDs) {
+      const song = await this.getSong(id);
+      if (!song) continue;
+      songs.push(song);
+    }
+    return songs;
   }
 }

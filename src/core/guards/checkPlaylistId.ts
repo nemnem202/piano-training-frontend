@@ -3,11 +3,12 @@ import type { PlaylistDTO } from "../types/playlist";
 
 const checkPlaylistTitle = async (
   params: Record<string, string>
-): Promise<boolean | PlaylistDTO> => {
-  const title = decodeURIComponent(params.title);
-  if (!title) return false;
-  const playlist = await PlaylistDAO.get(title);
-  return playlist ? playlist : false;
+): Promise<undefined | PlaylistDTO> => {
+  const id = decodeURIComponent(params.id);
+  if (!id) return undefined;
+  const playlist = await PlaylistDAO.getPLaylist(id);
+  console.log("coucou");
+  return playlist!!;
 };
 
 export default checkPlaylistTitle;

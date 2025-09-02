@@ -21,6 +21,8 @@ export class Router {
 
   // router.ts
   public async redirect(path: string) {
+    this.app.showLoadingScreen();
+
     const splitted = path.split("/").filter(Boolean);
     const splittedPath = splitted.length > 0 ? splitted : [""];
     const { route, params } = this.findRouteRecursive(splittedPath, this.routes);

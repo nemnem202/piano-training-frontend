@@ -5,14 +5,27 @@ export type Difficulty = (typeof difficultyPlaylist)[number];
 
 export type PlaylistTag = (typeof playlistTags)[number];
 
-export type PlaylistDTO = {
+export type Playlist = {
+  id: string;
   title: string;
   tag: PlaylistTag;
   difficulty: Difficulty;
-  songs: SongDTO[];
+  songs: Song[];
+  userNameOrigin?: string;
 };
 
-export type SongDTO = {
+export type PlaylistDTO = {
+  id: string;
+  title: string;
+  tag: PlaylistTag;
+  difficulty: Difficulty;
+  songsIDs: string[];
+  userNameOrigin?: string;
+};
+
+export type Song = {
+  id: string;
+  userNameOrigin?: string;
   title: string;
   composer: string;
   style: string;
@@ -21,21 +34,21 @@ export type SongDTO = {
   groove: string;
   bpm: number;
   repeats: number;
-  cells: CellDTO[];
+  cells: Cell[];
   exercice: ExerciceConfigDTO;
 };
 
-export type CellDTO = {
+export type Cell = {
   annots: string[];
   comments: string[];
   bars: string;
   spacer: number;
-  chord: ChordDTO | null;
+  chord: Chord | null;
 };
 
-export type ChordDTO = {
+export type Chord = {
   note: string;
   modifiers: string;
-  over: ChordDTO | null;
-  alternate: ChordDTO | null;
+  over: Chord | null;
+  alternate: Chord | null;
 };

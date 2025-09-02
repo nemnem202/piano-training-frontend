@@ -1,9 +1,11 @@
 import { Component } from "../../../core/abstract_classes/component";
 import importTemplate from "./import.html?raw";
-import { Playlist } from "../../../core/services/converters/ireal-decoder/decoder";
 import { PlaylistDAO } from "../../../core/services/data/playlistDAO";
 import type { Router } from "../../../app/router";
 import { AppManager } from "../../../app/appManager";
+import { PlaylistInterpreter } from "../../../core/services/converters/ireal-decoder/decoder";
+import type { Playlist } from "../../../core/types/playlist";
+import { v4 } from "uuid";
 
 export class ImportModal extends Component {
   modal: HTMLDivElement | null = null;
@@ -136,8 +138,15 @@ export class ImportModal extends Component {
   }
 
   private async processPlaylistCreation(url: string) {
-    const playlist = new Playlist(url);
-    console.log(playlist);
+    const playlistInterpreter = new PlaylistInterpreter(url);
+    const playlist: Playlist = {
+      songs: playlistInterpreter.songs,
+      title: playlistInterpreter.title || "My new playlist",
+      difficulty: "easy",
+      tag: "Your playground",
+      id: v4(),
+    };
+
     try {
       if (playlist.songs) {
         const title = await PlaylistDAO.create(playlist);

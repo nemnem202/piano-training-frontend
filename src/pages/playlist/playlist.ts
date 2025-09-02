@@ -2,33 +2,39 @@ import { AppManager } from "../../app/appManager";
 import { Page } from "../../core/abstract_classes/page";
 import { PlaylistDAO } from "../../core/services/data/playlistDAO";
 import { difficultyPlaylist } from "../../core/settings/playlist";
-import type { PlaylistDTO } from "../../core/types/playlist";
+import type { PlaylistDTO, Song } from "../../core/types/playlist";
 import template from "./playlist.html?raw";
 
 export class PlaylistPage extends Page {
-  title: string | undefined;
+  id: string | undefined;
+  playlist?: PlaylistDTO;
+
   constructor(params: Record<string, string>) {
     super(template, "playlist-page-container", params);
-    this.title = decodeURIComponent(params.title);
-    this.init(this.title);
+    this.id = decodeURIComponent(params.id);
+    this.init(this.id);
   }
 
-  private async init(title: string) {
+  private async init(id: string) {
+    if (!id) return;
+    const playlistDTO = await PlaylistDAO.getPLaylist(id);
+    if (playlistDTO) {
+      this.playlist = playlistDTO;
+      this.showSongs(playlistDTO);
+    }
+
     this.setTitle();
     this.setMenu();
-    let playlist;
-    if (title) {
-      playlist = await PlaylistDAO.get(title);
-    }
-    this.showSongs(playlist);
   }
 
   private setTitle() {
     const input = this.content.querySelector("input");
     const mirror = this.content.querySelector("span");
     if (!input || !mirror) return;
-    if (this.title) {
-      input.value = this.title;
+    if (this.playlist) {
+      input.value = this.playlist.title;
+    } else {
+      input.value = "My new Playlist";
     }
     // place le focus
     // met le curseur à la fin du texte
@@ -57,7 +63,7 @@ export class PlaylistPage extends Page {
       const option = document.createElement("option");
       option.value = option.textContent = diff;
 
-      if (index === 0) {
+      if (option.value === this.playlist?.difficulty) {
         option.selected = true;
       }
 
@@ -65,11 +71,11 @@ export class PlaylistPage extends Page {
     }
   }
 
-  private showSongs(playlist?: PlaylistDTO) {
-    if (!playlist) return;
+  private async showSongs(playlist: PlaylistDTO) {
+    const songs = await PlaylistDAO.getAllSongsOfAPlaylist(playlist);
     const container = this.content.querySelector(".playlist-modules");
     if (!container) return;
-    for (const song of playlist.songs) {
+    for (const song of songs) {
       const card = document.createElement("div");
       card.className = "module-preview";
       card.innerHTML += `
@@ -89,7 +95,7 @@ export class PlaylistPage extends Page {
   `;
       container.appendChild(card);
       card.addEventListener("click", () => {
-        AppManager.getInstance().router?.redirect(`exercices/${this.title}/${song.title}`);
+        AppManager.getInstance().router?.redirect(`exercices/${song.id}`);
       });
     }
   }

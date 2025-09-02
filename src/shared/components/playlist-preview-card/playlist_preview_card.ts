@@ -11,12 +11,12 @@ export class PlaylistPreviewCard extends Component {
     <div class="playlist-preview-card-title">${p.title}</div>
     <div class="playlist-preview-card-details">
     <div>${p.difficulty}</div>
-    <div>${p.songs.length}</div>
+    <div>${p.songsIDs.length}</div>
     </div>
     `;
 
     this.content.addEventListener("click", () => {
-      AppManager.getInstance().router?.redirect(`playlist/${p.title}`);
+      AppManager.getInstance().router?.redirect(`playlist/${p.id}`);
     });
   }
 }

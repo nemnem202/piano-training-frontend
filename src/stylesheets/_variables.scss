@@ -75,6 +75,7 @@ body {
   padding: 0;
   width: 100%;
   overflow-x: hidden;
+  min-height: 100vh;
 }
 
 body {
@@ -171,4 +172,25 @@ button {
   outline: none;
   background-color: transparent;
   color: $accent;
+}
+
+.spinner {
+  // width: 48px;
+  // height: 48px;
+  border-color: $text;
+  border-style: solid;
+  opacity: $opacity1;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
