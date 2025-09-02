@@ -53,7 +53,17 @@ export class PlaylistPage extends Page {
 
       // redimensionne à chaque frappe
       input.addEventListener("input", resizeInput);
+      input.addEventListener("focusout", () => this.updatePlaylistTitle(input.value));
     }, 1);
+  }
+
+  private async updatePlaylistTitle(title: string) {
+    if (!this.playlist) return;
+    this.playlist.title = title;
+    PlaylistDAO.updatePlaylist(this.playlist).then((data) => {
+      console.log(data.status);
+      console.log(data.mssg);
+    });
   }
 
   private setMenu() {
