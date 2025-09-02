@@ -70,7 +70,7 @@ export class PlaylistDAO {
     const updateReq = await store.put(playlistDTO, playlistDTO.id);
 
     if (updateReq) {
-      return { status: true, mssg: updateReq };
+      return { status: true, mssg: "Updated successfully" };
     } else {
       return { status: false, mssg: "An error occured while saving in the db" };
     }

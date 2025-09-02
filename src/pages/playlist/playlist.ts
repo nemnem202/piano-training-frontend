@@ -9,6 +9,9 @@ export class PlaylistPage extends Page {
   id: string | undefined;
   playlist?: PlaylistDTO;
 
+  updateTitleMssg = document.createElement("div");
+  currentPlaylistTitle: string = "";
+
   constructor(params: Record<string, string>) {
     super(template, "playlist-page-container", params);
     this.id = decodeURIComponent(params.id);
@@ -33,6 +36,7 @@ export class PlaylistPage extends Page {
     if (!input || !mirror) return;
     if (this.playlist) {
       input.value = this.playlist.title;
+      this.currentPlaylistTitle = this.playlist.title;
     } else {
       input.value = "My new Playlist";
     }
@@ -55,14 +59,27 @@ export class PlaylistPage extends Page {
       input.addEventListener("input", resizeInput);
       input.addEventListener("focusout", () => this.updatePlaylistTitle(input.value));
     }, 1);
+
+    this.updateTitleMssg.className = "playlist-update-title-message";
+    const titleContainer = this.content.querySelector(".playlist-title-container");
+    if (!titleContainer) return;
+    titleContainer.appendChild(this.updateTitleMssg);
   }
 
   private async updatePlaylistTitle(title: string) {
-    if (!this.playlist) return;
+    if (!this.playlist || title === this.currentPlaylistTitle) return;
     this.playlist.title = title;
     PlaylistDAO.updatePlaylist(this.playlist).then((data) => {
-      console.log(data.status);
-      console.log(data.mssg);
+      if (data.status === true) {
+        this.updateTitleMssg.classList.remove("error");
+        this.updateTitleMssg.classList.add("success");
+        this.currentPlaylistTitle = title;
+      } else {
+        this.updateTitleMssg.classList.remove("success");
+        this.updateTitleMssg.classList.add("error");
+      }
+
+      this.updateTitleMssg.innerText = data.mssg;
     });
   }
 

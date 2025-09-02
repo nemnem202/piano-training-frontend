@@ -34,6 +34,7 @@ $accent: #ffe5c1;
 $highlight: #ff7d00;
 $warm: #78290f;
 $text: rgb(255, 251, 243);
+$success: green;
 
 // borders:
 
@@ -62,7 +63,7 @@ $transition-lenght1: 0.2s cubic-bezier(0.94, -0.01, 0.99, 0.04);
 // global
 
 :root {
-  font-size: 10px;
+  font-size: 8px;
 }
 
 * {
@@ -141,6 +142,8 @@ button {
 
 .button1 {
   background-color: transparent;
+  font: $small-font;
+  font-size: $text-xxs;
   border: $border1;
   padding: 0 $padding1;
   transition: $transition1;
