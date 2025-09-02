@@ -22,10 +22,10 @@
 }
 
 .synth-nav-container {
-  background-color: $accent;
-  width: 100%;
   display: flex;
   justify-content: flex-end;
+  padding: 0.2rem;
+  // gap: $padding1;
 }
 
 .synth-nav {
@@ -57,10 +57,14 @@
 
 .synth-module-filter-col {
   height: 100%;
-  // width: 30%;
+  width: 25rem;
   display: flex;
   flex-direction: column;
   overflow: scroll;
+
+  * {
+    width: 100%;
+  }
 }
 
 .syth-module-osc-col::-webkit-scrollbar,
@@ -101,12 +105,35 @@
 
 .synth-module-header-filter {
   border: $border1;
-  height: 15%;
+  display: flex;
+  gap: $padding1;
+  padding: $padding1;
 }
 
 .synth-module-filter-params {
   border: $border1;
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $padding1;
+  padding: $padding1;
+
+  > div {
+    display: flex;
+  }
+}
+
+.filter-param-label {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  div {
+    width: min-content;
+  }
+}
+
+.filter-param-label {
+  font: $small-font;
 }
 
 .synth-module-filter-overview {

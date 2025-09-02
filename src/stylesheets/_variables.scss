@@ -135,8 +135,7 @@ button {
   border-radius: $border-radius1;
 }
 
-.button1,
-.button1.selected:hover {
+.button1 {
   background-color: transparent;
   border: $border1;
   padding: 0 $padding1;
@@ -146,6 +145,7 @@ button {
   justify-content: center;
   text-align: center;
   color: $text;
+  cursor: pointer;
 
   svg {
     fill: $text;

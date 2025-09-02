@@ -1,4 +1,4 @@
-import type { Oscillator, SynthConfig, Waveform } from "../types/synth";
+import type { Filter, FilterType, Oscillator, SynthConfig, Waveform } from "../types/synth";
 
 export const defaultOscillator: Oscillator = {
   type: "waveform",
@@ -37,3 +37,22 @@ export const waveFormFunctions: Record<Waveform, (x: number) => number> = {
     return Math.sign(Math.sin(x));
   },
 };
+
+export const filterOverviewFunctions: Record<FilterType, (filter: Filter, freq: number) => number> =
+  {
+    "low-cut": (filter, freq) => {
+      return 5;
+    },
+    "high-cut": (filter, freq) => {
+      return 10;
+    },
+    bell: (filter, freq) => {
+      return 5;
+    },
+    "high-shelf": (filter, freq) => {
+      return 8;
+    },
+    "low-shelf": (filter, freq) => {
+      return 6;
+    },
+  };

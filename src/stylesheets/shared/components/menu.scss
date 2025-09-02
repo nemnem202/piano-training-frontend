@@ -1,0 +1,24 @@
+@use "../../variables" as *;
+
+.menu-container {
+  background-color: transparent;
+  font: $small-font;
+  color: $text;
+  border: $border1;
+  outline: none;
+  transition: $transition1;
+}
+
+.menu-container:hover {
+  background-color: $accent;
+  color: $bg-color;
+
+  option {
+    color: $text;
+    background-color: $bg-color;
+  }
+}
+
+.menu-container option {
+  background-color: $bg-color;
+}

@@ -4,7 +4,12 @@ import type { ExerciceStore } from "../../core/services/stores/exerciceStore";
 import { defaultOscillator } from "../../core/settings/synth";
 import type { Bounds } from "../../core/types/modules";
 import type { Oscillator, SynthConfig } from "../../core/types/synth";
+import type { RadioItem, RadioItems } from "../../core/types/ui";
+import { Knob } from "../components/knob/knob";
+import { Menu } from "../components/menu/menu";
+import { Radio } from "../components/radio/radio";
 import { EnveloppeComponent } from "../components/synth/eveloppe";
+import { FilterComponent } from "../components/synth/filter";
 import { OscillatorComponent } from "../components/synth/oscillator";
 import { OscillatorParams } from "../components/synth/params";
 
@@ -56,22 +61,14 @@ export class SynthetizerModule extends Module {
   }
 
   private createNav() {
-    const nav = document.createElement("div");
-    nav.className = "synth-nav";
-
-    const buttonMain = document.createElement("div");
-    buttonMain.innerText = "Main";
-    buttonMain.className = "synth-module-nav-button";
-
-    buttonMain.classList.add("active");
-
-    const buttonMixer = document.createElement("div");
-    buttonMixer.innerText = "Mixer";
-    buttonMixer.className = "synth-module-nav-button";
-
-    nav.appendChild(buttonMain);
-    nav.appendChild(buttonMixer);
-    this.windowBar.appendChild(nav);
+    const btns: RadioItems = new Set<RadioItem>();
+    const main: RadioItem = { value: "Main", func: () => {} };
+    const mixer: RadioItem = { value: "Mixer", func: () => {} };
+    btns.add(main);
+    btns.add(mixer);
+    const nav = new Radio(btns);
+    nav.content.classList.add("synth-nav-container");
+    this.windowBar.appendChild(nav.content);
   }
 
   private createOscillatorColumn() {
@@ -135,23 +132,85 @@ export class SynthetizerModule extends Module {
   private createHeaderFilter(): HTMLDivElement {
     const headerFilter = document.createElement("div");
     headerFilter.className = "synth-module-header-filter";
-    headerFilter.innerText = "header filter";
+    const btns: RadioItems = new Set<RadioItem>();
+    btns.add({ value: "A", func: () => {} });
+    btns.add({ value: "B", func: () => {} });
+    const radio = new Radio(btns);
+    headerFilter.appendChild(radio.content);
     return headerFilter;
   }
 
   private createFilterParams(): HTMLDivElement {
     const filterParams = document.createElement("div");
     filterParams.className = "synth-module-filter-params";
-    filterParams.innerText = "filter params";
+    // filterParams.innerText = "filter params";
 
+    const frequency = new Knob((value) => {
+      console.log("freq:", value);
+    });
+
+    const gain = new Knob((value) => {
+      console.log("gain", value);
+    });
+
+    const q = new Knob((value) => {
+      console.log("q", value);
+    });
+
+    // Frequency knob and label
+    const freqContainer = document.createElement("div");
+    const freqTxt = document.createElement("div");
+    freqContainer.className = "filter-param-label";
+    freqTxt.innerText = "Freq";
+    freqContainer.appendChild(frequency.content);
+    freqContainer.appendChild(freqTxt);
+
+    // Gain knob and label
+    const gainContainer = document.createElement("div");
+    const gainTxt = document.createElement("div");
+    gainContainer.className = "filter-param-label";
+    gainTxt.innerText = "Gain";
+    gainContainer.appendChild(gain.content);
+    gainContainer.appendChild(gainTxt);
+
+    // Q knob and label
+    const qContainer = document.createElement("div");
+    const qTxt = document.createElement("div");
+    qContainer.className = "filter-param-label";
+    qTxt.innerText = "Q";
+    qContainer.appendChild(q.content);
+    qContainer.appendChild(qTxt);
+
+    const firstRow = document.createElement("div");
+    firstRow.appendChild(freqContainer);
+    firstRow.appendChild(gainContainer);
+    firstRow.appendChild(qContainer);
+
+    const secRow = document.createElement("div");
+
+    const menuLabel = document.createElement("div");
+    menuLabel.innerText = "Type";
+    menuLabel.className = "filter-param-label";
+    const items: Record<string, string> = {
+      lowpass: "Lowpass",
+      highpass: "Highpass",
+      bandpass: "Bandpass",
+      bell: "Bell",
+    };
+
+    const type = new Menu(items, () => console.log("menu changed value: ", type.value));
+
+    secRow.appendChild(menuLabel);
+    secRow.appendChild(type.content);
+
+    filterParams.appendChild(firstRow);
+    filterParams.appendChild(secRow);
     return filterParams;
   }
 
-  private createFilterOverview(): HTMLDivElement {
-    const filterOverview = document.createElement("div");
-    filterOverview.innerText = "filter overview";
-    filterOverview.className = "synth-module-filter-overview";
-    return filterOverview;
+  private createFilterOverview(): HTMLCanvasElement {
+    const filterOverview = new FilterComponent({ frequency: 440, gain: 50, q: 50, type: "bell" });
+    return filterOverview.content;
   }
 
   private createRemoveOscillatorButton(id: string): HTMLDivElement {
