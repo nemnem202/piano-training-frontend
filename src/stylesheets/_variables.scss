@@ -28,6 +28,7 @@ $border-radius2: 1.6rem;
 // colors
 
 $bg-color: #001524;
+$bg-color2: #031f34;
 $bg-sec: #15616d;
 $accent: #ffe5c1;
 $highlight: #ff7d00;
@@ -68,11 +69,12 @@ $transition-lenght1: 0.2s cubic-bezier(0.94, -0.01, 0.99, 0.04);
   box-sizing: border-box;
 }
 
-body,
-html {
-  all: unset;
+html,
+body {
+  margin: 0;
+  padding: 0;
   width: 100%;
-  height: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -95,6 +97,7 @@ h1 {
 .logo {
   font: $logo-font;
   color: $accent;
+  cursor: pointer;
 }
 
 .secondary {
@@ -160,4 +163,12 @@ button {
   svg {
     fill: $bg-color;
   }
+}
+
+.input1 {
+  font: $small-font;
+  border: $border1;
+  outline: none;
+  background-color: transparent;
+  color: $accent;
 }

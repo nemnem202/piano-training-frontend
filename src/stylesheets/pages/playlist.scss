@@ -5,6 +5,8 @@
   flex-direction: column;
   gap: $padding5;
   align-items: center;
+  padding: $padding6;
+  box-sizing: border-box;
 }
 
 .input-heading {
@@ -29,6 +31,7 @@
 
 .playlist-difficulty {
   display: flex;
+  gap: $padding1;
 }
 
 #difficulty-menu {
@@ -37,10 +40,16 @@
   color: $highlight;
   border: none;
   outline: none;
+  transition: $transition1;
+}
+
+#difficulty-menu:hover {
+  background-color: $bg-color2;
 }
 
 #difficulty-menu option {
   background-color: transparent;
+  background-color: $bg-color;
 }
 
 .playlist-import-button {
@@ -76,6 +85,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  cursor: pointer;
 }
 
 .module-preview-image {

@@ -1,6 +1,5 @@
 import { Component } from "../../../core/abstract_classes/component";
 import importTemplate from "./import.html?raw";
-import "./import.css";
 import { Playlist } from "../../../core/services/converters/ireal-decoder/decoder";
 import { PlaylistDAO } from "../../../core/services/data/playlistDAO";
 import type { Router } from "../../../app/router";

@@ -1,3 +1,5 @@
+@use "../../variables" as *;
+
 .import-backgroundScreen {
   position: fixed;
   top: 0;
@@ -13,21 +15,28 @@
 .import-modal {
   min-width: 800px;
   min-height: 300px;
-  background-color: red;
+  background-color: $bg-color;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  border: 2px dashed #aaa;
-  padding: 2rem;
+  border: $border1;
+  padding: $padding1;
   text-align: center;
+  font: $small-font;
+  color: $text;
+
+  .small {
+    opacity: $opacity1;
+    font-size: $text-xs;
+  }
 }
 
 .import-modal.dragover {
-  border-color: blue;
-  background: #eef;
+  border-color: $highlight;
 }
 
 .urlInputContainer {
   display: flex;
+  gap: $padding1;
 }
