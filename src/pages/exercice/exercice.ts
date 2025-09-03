@@ -7,6 +7,7 @@ import { moduleRegistry } from "../../core/settings/moduleRegistry";
 import type { Corner, Dimensions, Edge } from "../../core/types/modules";
 import type { Song } from "../../core/types/playlist";
 import { ExerciceHeader } from "../../shared/components/exerciceHeader/exerciceHeader";
+import { ExerciceMagnet } from "../../shared/components/exerciceMagnet/exerciceMagnet";
 import { ExerciceMenu } from "../../shared/components/exerciceMenu/exerciceMenu";
 
 export class Exercice extends Page {
@@ -15,7 +16,7 @@ export class Exercice extends Page {
   private ctx: CanvasRenderingContext2D | null = null;
   private song: Song | undefined;
   public gridCellSize = 30;
-  public readonly magnetism: boolean | undefined = true;
+  public magnetism: boolean | undefined = true;
   public appDimensions: Dimensions = { width: 0, height: 0 };
   public modules: Map<number, Module> = new Map();
   private topZIndex = 0;
@@ -56,6 +57,7 @@ export class Exercice extends Page {
     this.addModules();
     this.addHeader();
     this.addMenu();
+    this.addMagnet();
 
     window.addEventListener("resize", () => {
       this.clearCanvas();
@@ -85,6 +87,27 @@ export class Exercice extends Page {
   private addMenu() {
     const menu = new ExerciceMenu();
     this.content.appendChild(menu.content);
+  }
+
+  private addMagnet() {
+    const magnet = new ExerciceMagnet();
+
+    this.content.appendChild(magnet.content);
+
+    magnet.content.addEventListener("click", () => {
+      this.magnetism = !this.magnetism;
+      for (const mod of this.modules) {
+        mod[1].updateMagnetismStrategies();
+      }
+
+      if (this.magnetism) {
+        this.drawGrid();
+        magnet.content.classList.add("active");
+      } else {
+        this.clearCanvas();
+        magnet.content.classList.remove("active");
+      }
+    });
   }
 
   public removeModule(module: Module) {
@@ -122,7 +145,7 @@ export class Exercice extends Page {
 
   /** Dessine la grille principale et secondaire */
   private drawGrid(): void {
-    if (!this.ctx) return;
+    if (!this.ctx || !this.magnetism) return;
 
     this.clearCanvas();
     this.ctx.strokeStyle = "#fff";

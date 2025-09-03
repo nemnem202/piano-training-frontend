@@ -10,3 +10,59 @@
     display: none; // Chrome, Safari, Edge
   }
 }
+
+.exercice-magnet {
+  width: 5rem;
+  height: 5rem;
+  position: absolute;
+  margin: $padding2 $padding3;
+  top: 0;
+  left: calc(5rem + $padding2);
+  border-radius: $border-radius1;
+  border: 0.5rem solid $text;
+  opacity: $opacity1;
+  transition: $transition1;
+  background-color: $bg-color;
+  overflow: hidden;
+  z-index: 400;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  svg {
+    width: 2.5rem;
+    height: 2.5rem;
+    transition: $transition1;
+    fill: $text;
+    // fill-opacity: $opacity1;
+  }
+}
+
+.exercice-magnet:hover {
+  border-color: $accent;
+  svg {
+    fill: $accent;
+  }
+}
+
+.exercice-magnet:hover {
+  opacity: 1;
+}
+
+.exercice-magnet.active {
+  border-color: $warm;
+  opacity: 0.9;
+
+  svg {
+    fill: $warm;
+  }
+}
+
+.exercice-magnet.active:hover {
+  border-color: $warm1;
+  opacity: 1;
+
+  svg {
+    fill: $warm1;
+  }
+}
