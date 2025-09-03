@@ -25,6 +25,13 @@ $padding6: 6rem;
 $border-radius1: 1rem;
 $border-radius2: 1.6rem;
 
+// opacities
+
+$opacity1: 0.5;
+$opacity2: 0.3;
+$opacity3: 0.1;
+$opacity4: 0.07;
+$opacity5: 0.05;
 // colors
 
 $bg-color: #001524;
@@ -34,6 +41,11 @@ $accent: #ffe5c1;
 $highlight: #ff7d00;
 $warm: #78290f;
 $text: rgb(255, 251, 243);
+$text-opacity: rgba(255, 251, 243, $opacity1);
+$text-opacity2: rgba(255, 251, 243, $opacity2);
+$text-opacity3: rgba(255, 251, 243, $opacity3);
+$text-opacity4: rgba(255, 251, 243, $opacity4);
+$text-opacity5: rgba(255, 251, 243, $opacity5);
 $success: green;
 
 // borders:
@@ -51,10 +63,6 @@ $medium-default-font: normal normal $text-md $secondary-font;
 $paragraph-font: normal normal $text-sm $secondary-font;
 $small-font: normal lighter $text-xs $secondary-font;
 
-// opacities
-
-$opacity1: 0.5;
-
 //transitions
 
 $transition1: all 0.2s cubic-bezier(0.94, -0.01, 0.99, 0.04);
@@ -68,6 +76,11 @@ $transition-lenght1: 0.2s cubic-bezier(0.94, -0.01, 0.99, 0.04);
 
 * {
   box-sizing: border-box;
+}
+
+::selection {
+  background: $accent;
+  color: $bg-color;
 }
 
 html {
@@ -207,8 +220,6 @@ button {
 }
 
 .spinner {
-  // width: 48px;
-  // height: 48px;
   border-color: $text;
   border-style: solid;
   opacity: $opacity1;
@@ -225,4 +236,11 @@ button {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.success {
+  color: $success;
+}
+.error {
+  color: $warm;
 }

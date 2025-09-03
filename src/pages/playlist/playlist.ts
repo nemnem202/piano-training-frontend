@@ -2,15 +2,26 @@ import { AppManager } from "../../app/appManager";
 import { Page } from "../../core/abstract_classes/page";
 import { PlaylistDAO } from "../../core/services/data/playlistDAO";
 import { difficultyPlaylist } from "../../core/settings/playlist";
-import type { PlaylistDTO, Song } from "../../core/types/playlist";
+import {
+  difficulties,
+  type Difficulty,
+  type PlaylistDTO,
+  type Song,
+} from "../../core/types/playlist";
+import { SearchBar } from "../../shared/components/searchBar/searchBar";
 import template from "./playlist.html?raw";
 
 export class PlaylistPage extends Page {
-  id: string | undefined;
-  playlist?: PlaylistDTO;
+  private id: string | undefined;
+  private playlist?: PlaylistDTO;
+  private songs: Song[] = [];
 
-  updateTitleMssg = document.createElement("div");
-  currentPlaylistTitle: string = "";
+  private updateTitleMssg = document.createElement("div");
+  private currentPlaylistTitle: string = "";
+  private menu = this.content.querySelector(".menu") as HTMLSelectElement;
+  private menuUpdateMssg = document.createElement("div");
+
+  // private songElements: Record<string, HTMLElement> = {};
 
   constructor(params: Record<string, string>) {
     super(template, "playlist-page-container", params);
@@ -23,7 +34,10 @@ export class PlaylistPage extends Page {
     const playlistDTO = await PlaylistDAO.getPLaylist(id);
     if (playlistDTO) {
       this.playlist = playlistDTO;
-      this.showSongs(playlistDTO);
+      PlaylistDAO.getAllSongsOfAPlaylist(this.playlist).then((s) => {
+        this.songs = s;
+        this.showSongs(this.songs).then(() => this.setSearchBar());
+      });
     }
 
     this.setTitle();
@@ -40,8 +54,7 @@ export class PlaylistPage extends Page {
     } else {
       input.value = "My new Playlist";
     }
-    // place le focus
-    // met le curseur à la fin du texte
+
     const length = input.value.length;
     input.setSelectionRange(length, length);
 
@@ -84,8 +97,7 @@ export class PlaylistPage extends Page {
   }
 
   private setMenu() {
-    const menu = this.content.querySelector(".menu");
-
+    this.content.querySelector(".playlist-infos-container")?.appendChild(this.menuUpdateMssg);
     for (const [index, diff] of difficultyPlaylist.entries()) {
       const option = document.createElement("option");
       option.value = option.textContent = diff;
@@ -94,15 +106,58 @@ export class PlaylistPage extends Page {
         option.selected = true;
       }
 
-      menu?.appendChild(option);
+      this.menu.appendChild(option);
     }
+
+    this.menu.addEventListener("change", () => this.updatePlaylistDifficulty(this.menu.value));
   }
 
-  private async showSongs(playlist: PlaylistDTO) {
-    const songs = await PlaylistDAO.getAllSongsOfAPlaylist(playlist);
+  private async updatePlaylistDifficulty(difficulty: string) {
+    if (
+      !this.menu ||
+      !this.playlist ||
+      !this.playlist.difficulty ||
+      !difficulties.includes(difficulty as Difficulty)
+    )
+      return;
+
+    this.playlist.difficulty = difficulty as Difficulty;
+
+    const data = await PlaylistDAO.updatePlaylist(this.playlist);
+
+    if (data.status === true) {
+      this.menuUpdateMssg.className = "success";
+    } else {
+      this.menuUpdateMssg.className = "error";
+    }
+
+    this.menuUpdateMssg.innerText = data.mssg;
+  }
+
+  private setSearchBar() {
+    const searchBar = new SearchBar(
+      "title",
+      this.songs,
+      this.updateSearchBarFromBrowsedArray.bind(this)
+    );
+    this.content.querySelector(".playlist-infos")?.appendChild(searchBar.content);
+  }
+
+  private updateSearchBarFromBrowsedArray(array: Song[]) {
+    console.log(array);
+    this.showSongs(array);
+  }
+
+  private async showSongs(array: Song[]) {
     const container = this.content.querySelector(".playlist-modules");
+
     if (!container) return;
-    for (const song of songs) {
+    container.innerHTML = `  <div class="new-module-button">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#e3e3e3">
+      <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
+    </svg>
+  </div>`;
+    for (const song of array) {
       const card = document.createElement("div");
       card.className = "module-preview";
       card.innerHTML += `
@@ -120,6 +175,7 @@ export class PlaylistPage extends Page {
       </div>
 
   `;
+      // this.songElements[song.title] = card;
       container.appendChild(card);
       card.addEventListener("click", () => {
         AppManager.getInstance().router?.redirect(`exercices/${song.id}`);

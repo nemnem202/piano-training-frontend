@@ -1,7 +1,10 @@
 import type { difficultyPlaylist, playlistTags } from "../settings/playlist";
 import type { ExerciceConfigDTO } from "./config";
 
-export type Difficulty = (typeof difficultyPlaylist)[number];
+export const difficulties = ["beginner", "easy", "medium", "advanced", "pro"] as const;
+// "as const" rend le tableau littéral et readonly
+
+export type Difficulty = (typeof difficulties)[number];
 
 export type PlaylistTag = (typeof playlistTags)[number];
 

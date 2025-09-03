@@ -152,9 +152,13 @@
   height: $small-font;
 }
 
-.playlist-update-title-message.success {
-  color: $success;
+.playlist-infos-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
-.playlist-update-title-message.error {
-  color: $warm;
+
+.playlist-infos-container .success,
+.playlist-infos-container .error {
+  font: $small-font;
 }

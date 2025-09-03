@@ -1,0 +1,88 @@
+@use "../../variables" as *;
+
+.searchBar-container {
+  position: relative;
+  width: 250px;
+  height: 4rem;
+}
+
+.searchBar:has(input:focus) {
+  border-color: $accent;
+
+  svg {
+    fill: $accent;
+  }
+}
+
+.searchBar {
+  position: absolute;
+  width: 100%;
+  border: $border1;
+  border-color: transparent;
+  background-color: $bg-color2;
+  border-radius: 3rem;
+  overflow: hidden;
+  z-index: 30;
+  transition: $transition1;
+
+  input {
+    width: 100%;
+    height: 40px;
+    padding-left: 15px;
+    font-size: 1.5rem;
+    color: $text;
+    border: none;
+    background-color: transparent;
+
+    &:focus {
+      border-color: $accent;
+      outline: none;
+      color: $accent;
+    }
+
+    &::placeholder {
+      color: $text;
+      opacity: $opacity1;
+    }
+
+    /* Compatibilité pour Firefox */
+    &:-moz-placeholder {
+      color: $text;
+      opacity: $opacity1;
+    }
+  }
+
+  .menuEl {
+    background-color: $bg-color;
+    color: $text;
+    height: 40px;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    padding-left: 15px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $bg-color2;
+    }
+  }
+
+  svg {
+    position: absolute;
+    right: 1.4rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2rem;
+    height: 2rem;
+    cursor: pointer;
+    transition: $transition1;
+    border-radius: 2rem;
+    overflow: visible;
+    fill: $text-opacity;
+  }
+
+  svg:hover {
+    background-color: $text-opacity4;
+    box-shadow: 0 0 0 1.3rem $text-opacity4;
+  }
+}
