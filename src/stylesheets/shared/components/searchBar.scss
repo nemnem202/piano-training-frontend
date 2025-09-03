@@ -6,7 +6,8 @@
   height: 4rem;
 }
 
-.searchBar:has(input:focus) {
+.searchBar:has(input:focus),
+.searchBar:hover {
   border-color: $accent;
 
   svg {

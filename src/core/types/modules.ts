@@ -17,7 +17,7 @@ export type Corner = "nw" | "ne" | "sw" | "se";
 export type Edge = "left" | "right" | "top" | "bottom";
 
 export type ModuleDTO = {
-  type: "ChordNames" | "Piano" | "SynthetizerModule";
+  type: "ChordNames" | "Piano" | "SynthetizerModule" | "ChordGrid";
   params: {
     bounds: Bounds;
     synthConfig?: SynthConfig;

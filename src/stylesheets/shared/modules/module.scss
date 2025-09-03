@@ -5,6 +5,13 @@
   top: 0px;
   left: 0px;
   overflow: hidden;
+  transition: border $transition-lenght1;
+  border: $border1;
+  border-color: transparent;
+}
+
+.module:hover {
+  border-color: $accent;
 }
 
 .module-windowbar {

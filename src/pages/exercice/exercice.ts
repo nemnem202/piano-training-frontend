@@ -14,7 +14,7 @@ export class Exercice extends Page {
   private store = new ExerciceStore();
   private grid: HTMLCanvasElement | undefined;
   private ctx: CanvasRenderingContext2D | null = null;
-  private song: Song | undefined;
+  public song: Song | undefined;
   public gridCellSize = 30;
   public magnetism: boolean | undefined = true;
   public appDimensions: Dimensions = { width: 0, height: 0 };
@@ -52,6 +52,8 @@ export class Exercice extends Page {
       return;
     }
 
+    console.log("song: ", this.song);
+
     this.updateDimensions();
     this.drawGrid();
     this.addModules();
@@ -74,6 +76,7 @@ export class Exercice extends Page {
       const ModuleClass = moduleRegistry[m.type];
       const module = new ModuleClass(m.params.bounds, this.store);
       module.attachContainer(this);
+      module.start();
       this.modules.set(this.modules.size, module);
     });
   }

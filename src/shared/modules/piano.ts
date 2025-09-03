@@ -26,6 +26,8 @@ export class Piano extends Module {
     this.setupMidiApi();
   }
 
+  start(): void {}
+
   destroy(): void {
     this.midiApi = null;
   }

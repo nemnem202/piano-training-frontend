@@ -12,3 +12,8 @@
   opacity: $opacity1;
   transition: $transition1;
 }
+
+.header-navbar div:hover {
+  color: $accent;
+  opacity: 1;
+}

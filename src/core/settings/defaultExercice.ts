@@ -11,6 +11,7 @@ export const DEFAULT_EXERCICE_CONFIG: ExerciceConfigDTO = {
       },
     },
     { type: "Piano", params: { bounds: { height: 20, width: 50, x: 50, y: 50 } } },
+    { type: "ChordGrid", params: { bounds: { height: 50, width: 50, x: 20, y: 20 } } },
   ],
   magnetism: false,
 };

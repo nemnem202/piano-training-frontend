@@ -40,6 +40,8 @@ export class SynthetizerModule extends Module {
     this.filterColumn();
   }
 
+  start(): void {}
+
   destroy() {
     this.synthApi?.destroy();
     this.synthApi = null;

@@ -1,0 +1,69 @@
+@use "../../variables" as *;
+
+.chord-grid-header {
+  height: 30px;
+  background-color: $bg-color;
+}
+
+.chord-grid-container {
+  height: calc(100% - 30px);
+  padding: $padding2;
+  background-color: $bg-color;
+  width: 100%;
+  font-family: $musical-font;
+  font-size: $text-md;
+  line-height: 1;
+  color: $text;
+  display: grid;
+  overflow: scroll;
+}
+
+.chord-grid-box {
+  position: relative;
+  display: flex;
+  overflow: visible;
+  justify-content: space-between;
+  align-items: center;
+  height: 30px;
+}
+
+.chord-grid-box.selected {
+  color: $bg-color;
+  background-color: $accent;
+}
+
+.chord-grid-box span {
+  display: block;
+  height: $text-md;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chord-grid-box span:not(.chord-grid-chord, .chord-grid-empty-chord) {
+  line-height: 2;
+}
+
+.chord-grid-chord {
+  font-family: $secondary-font;
+  // font-size: $text-sm;
+}
+
+.chord-grid-container::-webkit-scrollbar,
+.chord-grid-container::-webkit-scrollbar-corner {
+  background-color: $bg-color;
+  width: 10px;
+  height: 10px;
+}
+
+.chord-grid-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.5);
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+.chord-grid-container::-webkit-scrollbar-thumb:hover {
+  background: $accent;
+  border: 1px solid transparent;
+  background-clip: content-box;
+}

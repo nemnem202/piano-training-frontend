@@ -20,6 +20,8 @@ export abstract class Module extends Component {
 
   abstract destroy(): void;
 
+  abstract start(): void;
+
   constructor(bounds: Bounds, store: ExerciceStore) {
     super("div", "");
     this.content.classList.add("module");
@@ -39,6 +41,7 @@ export abstract class Module extends Component {
   }
 
   public attachContainer(container: Exercice) {
+    console.log("attach container");
     this.container = container;
     const containerRect = container.content.getBoundingClientRect();
     this.bounds = this.adaptBounds(this.bounds, containerRect);

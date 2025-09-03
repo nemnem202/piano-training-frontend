@@ -1,3 +1,4 @@
+import { ChordGrid } from "../../shared/modules/chordGrid";
 import { ChordNames } from "../../shared/modules/chordNames";
 import { Piano } from "../../shared/modules/piano";
 import { SynthetizerModule } from "../../shared/modules/synthetizer";
@@ -12,4 +13,5 @@ export const moduleRegistry: Record<
   ChordNames,
   Piano,
   SynthetizerModule,
+  ChordGrid,
 };
