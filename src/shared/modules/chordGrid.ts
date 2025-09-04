@@ -100,10 +100,9 @@ export class ChordGrid extends Module {
       const parts = cell.annotations.filter((a) => a.type === "Part");
       const keyChanges = cell.annotations.filter((a) => a.type === "KeyChange");
       const repeat = cell.annotations.filter((a) => a.type === "RepeatStart");
+      const time_changes = cell.annotations.filter((a) => a.type === "TimeChange");
       const unk = cell.annotations.filter((a) => a.type === "unknown");
       // const repeatCorner = cell.annotations.find((a) => a.content?.toLowerCase() === "l");
-
-      console.log(cell.annotations);
 
       parts.forEach((p) => {
         if (p.content)
@@ -119,6 +118,21 @@ export class ChordGrid extends Module {
 
       repeat.forEach((p) => {
         if (p.content) this.createChild(content, "", "annotation repeat-annotation");
+      });
+
+      time_changes.forEach((p) => {
+        if (p.content) {
+          const parts = p.content.split("T")[1].split("");
+          const top = document.createElement("div");
+          const bottom = document.createElement("div");
+          top.innerText = parts[0];
+          bottom.innerText = parts[1];
+          const time_changes = document.createElement("div");
+          time_changes.className = "annotation time-signature";
+          content.appendChild(time_changes);
+          time_changes.appendChild(top);
+          time_changes.appendChild(bottom);
+        }
       });
 
       unk.forEach((p) => {

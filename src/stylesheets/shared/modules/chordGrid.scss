@@ -7,7 +7,7 @@
 
 .chord-grid-container {
   height: calc(100% - 30px);
-  padding: $padding2;
+  padding: 50px;
   padding-top: 5rem;
   background-color: $bg-color;
   width: 100%;
@@ -31,7 +31,6 @@
 
 .chord-grid-measure-box div {
   height: 100%;
-
   font: $medium-default-font;
   line-height: 1;
 }
@@ -91,6 +90,22 @@
   height: 100%;
   border-top: $border1;
   border-left: $border1;
+}
+
+.annotation.time-signature {
+  position: absolute;
+  left: -$text-sm;
+  top: calc(-#{$text-sm} / 2);
+  display: flex;
+  flex-direction: column;
+
+  div {
+    font-size: $text-sm !important;
+  }
+
+  :first-child {
+    border-bottom: $border1;
+  }
 }
 
 .unk-annotation {
