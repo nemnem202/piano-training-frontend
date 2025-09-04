@@ -7,9 +7,11 @@
     "watch:wasm": "cd src/core/services/sound/rust-synth && cargo watch -w src -s \"wasm-pack build --target web --out-dir build\"",
     "dev": "concurrently \"npm run watch:wasm\" \"vite\"",
     "build": "tsc && vite build",
+    "tauri:dev": "concurrently \"vite dev\" \"npx tauri dev\"",
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^2.8.4",
     "chokidar-cli": "^3.0.0",
     "concurrently": "^9.2.0",
     "sass": "^1.91.0",
