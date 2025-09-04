@@ -1,19 +1,14 @@
 import { AppManager } from "../../app/appManager";
 import { Page } from "../../core/abstract_classes/page";
 import { PlaylistDAO } from "../../core/services/data/playlistDAO";
-import { difficultyPlaylist } from "../../core/settings/playlist";
-import {
-  difficulties,
-  type Difficulty,
-  type PlaylistDTO,
-  type Song,
-} from "../../core/types/playlist";
+import { difficulties } from "../../core/settings/playlist";
+import { type Difficulty, type Playlist, type Song } from "../../core/types/playlist";
 import { SearchBar } from "../../shared/components/searchBar/searchBar";
 import template from "./playlist.html?raw";
 
 export class PlaylistPage extends Page {
   private id: string | undefined;
-  private playlist?: PlaylistDTO;
+  private playlist?: Playlist;
   private songs: Song[] = [];
 
   private updateTitleMssg = document.createElement("div");
@@ -31,10 +26,10 @@ export class PlaylistPage extends Page {
 
   private async init(id: string) {
     if (!id) return;
-    const playlistDTO = await PlaylistDAO.getPLaylist(id);
+    const playlistDTO = await PlaylistDAO.get_playlist(id);
     if (playlistDTO) {
       this.playlist = playlistDTO;
-      PlaylistDAO.getAllSongsOfAPlaylist(this.playlist).then((s) => {
+      PlaylistDAO.get_all_songs_of_a_playlist(this.playlist).then((s) => {
         this.songs = s;
         this.showSongs(this.songs).then(() => this.setSearchBar());
       });
@@ -82,7 +77,7 @@ export class PlaylistPage extends Page {
   private async updatePlaylistTitle(title: string) {
     if (!this.playlist || title === this.currentPlaylistTitle) return;
     this.playlist.title = title;
-    PlaylistDAO.updatePlaylist(this.playlist).then((data) => {
+    PlaylistDAO.update_playlist(this.playlist).then((data) => {
       if (data.status === true) {
         this.updateTitleMssg.classList.remove("error");
         this.updateTitleMssg.classList.add("success");
@@ -98,7 +93,7 @@ export class PlaylistPage extends Page {
 
   private setMenu() {
     this.content.querySelector(".playlist-infos-container")?.appendChild(this.menuUpdateMssg);
-    for (const [index, diff] of difficultyPlaylist.entries()) {
+    for (const [index, diff] of difficulties.entries()) {
       const option = document.createElement("option");
       option.value = option.textContent = diff;
 
@@ -123,7 +118,7 @@ export class PlaylistPage extends Page {
 
     this.playlist.difficulty = difficulty as Difficulty;
 
-    const data = await PlaylistDAO.updatePlaylist(this.playlist);
+    const data = await PlaylistDAO.update_playlist(this.playlist);
 
     if (data.status === true) {
       this.menuUpdateMssg.className = "success";
@@ -166,7 +161,7 @@ export class PlaylistPage extends Page {
       <div class="module-preview-infos">
         <div class="module-preview-title-author">
           <div class="module-preview-title">${song.title}</div>
-          <div class="module-preview-author">${song.composer}</div>
+          <div class="module-preview-author">${song.author}</div>
         </div>
         <div class="module-preview-key-bpm">
           <div class="module-preview-key">${song.key}</div>

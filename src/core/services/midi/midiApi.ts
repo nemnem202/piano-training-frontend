@@ -10,11 +10,11 @@ export class MidiApi {
   }
 
   private async requestMidiAccess() {
-    this.midiAccess = await navigator.requestMIDIAccess();
-    if (this.midiAccess) {
+    try {
+      this.midiAccess = await navigator.requestMIDIAccess({ sysex: false });
       this.onMidiSuccess(this.midiAccess);
-    } else {
-      alert("Can't access to midi api!  :/");
+    } catch (err) {
+      console.warn("Accès au midi refusé !");
     }
   }
 

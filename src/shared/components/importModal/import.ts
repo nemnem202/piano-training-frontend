@@ -6,6 +6,8 @@ import { AppManager } from "../../../app/appManager";
 import { PlaylistInterpreter } from "../../../core/services/converters/ireal-decoder/decoder";
 import type { Playlist } from "../../../core/types/playlist";
 import { v4 } from "uuid";
+import { IrealConverter } from "../../../core/services/converters/ireal-converter/irealConverter";
+import type { PlaylistIreal } from "../../../core/types/decoder";
 
 export class ImportModal extends Component {
   modal: HTMLDivElement | null = null;
@@ -139,20 +141,14 @@ export class ImportModal extends Component {
 
   private async processPlaylistCreation(url: string) {
     const playlistInterpreter = new PlaylistInterpreter(url);
-    const playlist: Playlist = {
-      songs: playlistInterpreter.songs,
-      title: playlistInterpreter.title || "My new playlist",
-      difficulty: "easy",
-      tag: "Your playground",
-      id: v4(),
-    };
+    const playlist = IrealConverter.convertPlaylist(playlistInterpreter);
 
     try {
       if (playlist.songs) {
-        const title = await PlaylistDAO.create(playlist);
-        if (title != null) {
+        const id = await PlaylistDAO.create_playlist(playlist);
+        if (id != null) {
           this.destroy();
-          this.router!.redirect(`playlist/${title}`);
+          this.router!.redirect(`playlist/${id}`);
         } else {
           console.error("An error occurred while saving the data");
         }

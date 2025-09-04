@@ -45,14 +45,12 @@ export class Exercice extends Page {
       return;
     }
 
-    this.song = await PlaylistDAO.getSong(this.params.id);
+    this.song = await PlaylistDAO.get_song(this.params.id);
 
     if (!this.song) {
       AppManager.getInstance().router?.redirect("not-found");
       return;
     }
-
-    console.log("song: ", this.song);
 
     this.updateDimensions();
     this.drawGrid();
@@ -71,8 +69,8 @@ export class Exercice extends Page {
   }
 
   private addModules() {
-    if (!this.song) return;
-    this.song.exercice.modules.forEach((m) => {
+    if (!this.song || !this.song.exercice_config) return;
+    this.song.exercice_config.modules.forEach((m) => {
       const ModuleClass = moduleRegistry[m.type];
       const module = new ModuleClass(m.params.bounds, this.store);
       module.attachContainer(this);

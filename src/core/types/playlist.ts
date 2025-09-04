@@ -1,57 +1,113 @@
-import type { difficultyPlaylist, playlistTags } from "../settings/playlist";
+import type { difficulties, playlistTags } from "../settings/playlist";
 import type { ExerciceConfigDTO } from "./config";
-
-export const difficulties = ["beginner", "easy", "medium", "advanced", "pro"] as const;
-// "as const" rend le tableau littéral et readonly
 
 export type Difficulty = (typeof difficulties)[number];
 
 export type PlaylistTag = (typeof playlistTags)[number];
 
-export type Playlist = {
-  id: string;
-  title: string;
-  tag: PlaylistTag;
-  difficulty: Difficulty;
-  songs: Song[];
-  userNameOrigin?: string;
-};
+export type SongTag = string;
 
-export type PlaylistDTO = {
-  id: string;
+export type Id = string;
+
+export type Key = { root: number; harm: string };
+
+export type Armature = [number, number];
+
+export type Playlist = {
+  Id: Id;
   title: string;
-  tag: PlaylistTag;
+  creation: number;
+  last_modif: number;
+  creator_username?: string;
+  creator_Id?: Id;
+  average_note?: string;
+  user_note?: string;
+  comments: Id[];
+  version: number;
+  songs: Id[];
+  Tags: PlaylistTag[];
+  public: boolean;
+  downloads?: number;
   difficulty: Difficulty;
-  songsIDs: string[];
-  userNameOrigin?: string;
+  genres?: string[];
 };
 
 export type Song = {
-  id: string;
-  userNameOrigin?: string;
+  id: Id;
   title: string;
-  composer: string;
-  style: string;
-  key: string;
-  transpose: number;
-  groove: string;
+  author: string;
+  description?: string;
+  tags: SongTag[];
+  creator_username?: string;
+  creator_Id?: string;
+  creation: number;
+  last_modif: number;
+  difficulty: Difficulty;
+  genre?: string;
+  style?: string;
+  exercice_config?: ExerciceConfigDTO;
+  version: number;
   bpm: number;
-  repeats: number;
-  cells: Cell[];
-  exercice: ExerciceConfigDTO;
+  key: Key;
+  armature: Armature;
+  measures: Measure[];
+  public: boolean;
 };
 
-export type Cell = {
-  annots: string[];
-  comments: string[];
-  bars: string;
-  spacer: number;
-  chord: Chord | null;
+export type annotationType =
+  | "Part"
+  | "RepeatStart"
+  | "RepeatEnd"
+  | "Coda"
+  | "KeyChange"
+  | "TimeChange"
+  | "unknown";
+
+export type annotation = {
+  content?: string;
+  type?: annotationType;
 };
 
 export type Chord = {
-  note: string;
-  modifiers: string;
-  over: Chord | null;
-  alternate: Chord | null;
+  root: string;
+  type: string;
+  notes?: number[];
+  rootNote?: number[];
+  over?: Chord;
+  alternate?: Chord;
 };
+
+export type Note = {
+  beat_start: number;
+  beat_end: number;
+  silent: boolean;
+};
+
+export type Cell = {
+  comments: string[];
+  annotations: annotation[];
+  spacer: number;
+  chord?: Chord;
+  bars: string;
+};
+
+export type Bar = "single" | "double" | "light-heavy" | "repeat-start" | "repeat-end";
+
+export type Measure = {
+  cells: Cell[];
+  notes: Note[];
+};
+// export type Cell = {
+//   annots: string[];
+//   comments: string[];
+//   bars: string;
+//   spacer: number;
+//   chord: Chord | null;
+// };
+
+// export type Chord = {
+//   note: string;
+//   modifiers: string;
+//   over: Chord | null;
+//   alternate: Chord | null;
+// };

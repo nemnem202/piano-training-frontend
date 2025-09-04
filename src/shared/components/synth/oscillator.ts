@@ -251,7 +251,6 @@ export class OscillatorComponent extends Component {
     }
 
     ctx.stroke();
-    console.log("done");
   }
 
   private async createSelectableWaves() {

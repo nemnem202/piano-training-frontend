@@ -24,7 +24,7 @@ export class Home extends Page {
       const cardsContainer = document.createElement("div");
       cardsContainer.className = "playlist-card-container";
 
-      const tagsPlaylists = await PlaylistDAO.getAllWithTag(tag);
+      const tagsPlaylists = await PlaylistDAO.get_all_with_tag(tag);
 
       if (tagsPlaylists.length === 0) {
         console.error("no playlist found for tag: ", tag);

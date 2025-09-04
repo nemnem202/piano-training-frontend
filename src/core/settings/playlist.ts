@@ -6,4 +6,4 @@ export const playlistTags = [
   "Instruments",
 ] as const;
 
-export const difficultyPlaylist = ["beginner", "easy", "medium", "advanced", "pro"] as const;
+export const difficulties = ["beginner", "easy", "medium", "advanced", "pro"] as const;

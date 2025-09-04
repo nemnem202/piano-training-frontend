@@ -1,9 +1,9 @@
 import { Module } from "../../core/abstract_classes/module";
 import type { ExerciceStore } from "../../core/services/stores/exerciceStore";
 import type { Bounds } from "../../core/types/modules";
-import type { Cell, Song } from "../../core/types/playlist";
+import type { Cell, Measure, Song } from "../../core/types/playlist";
 
-const GRID_COLUMNS = 16;
+const GRID_COLUMNS = 4;
 
 export class ChordGrid extends Module {
   private gridContainer = document.createElement("div");
@@ -27,105 +27,111 @@ export class ChordGrid extends Module {
       this.gridContainer.innerText = "No chord";
       return;
     }
+    console.log("measures: ", this.song.measures);
 
-    let prevCell: Cell = { annots: [], bars: "", chord: null, comments: [], spacer: 0 };
-
-    for (const [index, cell] of this.song.cells.entries()) {
-      const boxWrapper = document.createElement("div");
-      boxWrapper.className = "chord-grid-box";
-      this.gridContainer.appendChild(boxWrapper);
-      this.gridMeasures.push(boxWrapper);
-      this.fillCell(cell, prevCell, index, boxWrapper);
-      prevCell = cell;
+    for (const [index, m] of this.song.measures.entries()) {
+      const measure = document.createElement("div");
+      measure.className = "chord-grid-measure";
+      this.fillMeasure(measure, m);
+      this.gridContainer.appendChild(measure);
     }
-
-    this.changeSelectedMeasure(0);
   }
 
-  private fillCell(cell: Cell, prevCell: Cell, index: number, container: HTMLDivElement) {
-    console.log("[CELL] : ", cell);
+  private fillMeasure(div: HTMLDivElement, m: Measure) {
+    const annots_line = document.createElement("div");
+    const content_line = document.createElement("div");
+    const comments_line = document.createElement("div");
+    div.appendChild(annots_line);
+    div.appendChild(content_line);
+    div.appendChild(comments_line);
+    annots_line.className =
+      content_line.className =
+      comments_line.className =
+        "chord-grid-measure-line";
 
-    let leftBar = cell.bars.split("").filter((b) => b === "(" || b === "[" || b === "{");
-    if (prevCell.bars.split("").includes(")") && !(index % GRID_COLUMNS === 0)) {
-      leftBar = leftBar.filter((b) => b !== "(");
-    }
+    content_line.classList.add("content");
 
-    leftBar.forEach((lb) => this.addItem(lb, container));
-
-    if (leftBar.length === 0) {
-      this.addItem("", container);
-    } else {
-      this.measuresStartEndIndexes.start.push(index);
-    }
-
-    if (cell.chord) {
-      const chord = cell.chord.note + cell.chord.modifiers;
-      if (chord.toLowerCase() === "x") {
-        this.addItem(chord, container, "chord-grid-empty-chord");
-      } else {
-        this.addItem(chord, container, "chord-grid-chord");
+    const startBarRegex = /[\{\(\[]/;
+    const endBarRegex = /[\}\)\]]/;
+    for (const cell of m.cells) {
+      if (startBarRegex.test(cell.bars)) {
+        const bar = startBarRegex.exec(cell.bars);
+        if (bar) {
+          let content: string = "";
+          switch (bar[0]) {
+            case "{":
+              content = "\uE000";
+              break;
+            case "(":
+              content = "\uE030";
+              break;
+            case "[":
+              content = "\uE031";
+              break;
+          }
+          this.createChild(content_line, content, "start-bar");
+        }
       }
-    } else {
-      this.addItem("", container);
-    }
 
-    const rightBar = cell.bars
-      .split("")
-      .filter((b) => b === ")" || b === "]" || b === "}" || b === "Z");
-    rightBar.forEach((lb) => this.addItem(lb, container));
-    if (rightBar.length === 0) {
-      this.addItem("", container);
-    } else {
-      this.measuresStartEndIndexes.end.push(index);
-    }
-  }
+      if (cell.annotations.length > 0) {
+        const parts = cell.annotations.filter((a) => a.type === "Part");
+        const keyChanges = cell.annotations.filter((a) => a.type === "KeyChange");
+        const unk = cell.annotations.filter((a) => a.type === "unknown");
 
-  private addItem(value: string, container: HTMLDivElement, className?: string) {
-    const item = document.createElement("span");
-    if (className) item.className = className;
-    item.innerText = this.convertToMusicalSymbol(value);
-    // item.innerText = this.convertToMusicalSymbol(value);
-    container.appendChild(item);
-  }
+        parts.forEach((p) => {
+          if (p.content) this.createChild(annots_line, p.content, "part-annotation");
+        });
 
-  private convertToMusicalSymbol(value: string): string {
-    const values = value.split("");
-    for (let i = 0; i < values.length; i++) {
-      switch (values[i]) {
-        case "{":
-          values[i] = "\uE040";
-          break;
-        case "}":
-          values[i] = "\uE041";
-          break;
-        case ")":
-        case "(":
-          values[i] = "\uE030";
-          break;
-        case "[":
-        case "]":
-          values[i] = "\uE031";
-          break;
-        case "x":
-          values[i] = "\uE500";
-          break;
-        case "Z":
-          values[i] = "\uE032";
+        keyChanges.forEach((p) => {
+          if (p.content) {
+            const numbers = p.content.split("T")[1].split("");
+            this.createChild(annots_line, numbers[1] + "/" + numbers[2], "part-annotation");
+          }
+
+          unk.forEach((p) => {
+            if (p.content) {
+              this.createChild(annots_line, p.content, "unknown-annot");
+            }
+          });
+        });
+      }
+
+      if (cell.chord) {
+        this.createChild(content_line, cell.chord.root + cell.chord.type);
+      }
+
+      if (cell.spacer > 0) {
+        for (let i = 0; i < cell.spacer; i++) {
+          this.createChild(content_line, "");
+        }
+      }
+
+      if (endBarRegex.test(cell.bars)) {
+        const bar = endBarRegex.exec(cell.bars);
+        if (bar) {
+          let content: string = "";
+          switch (bar[0]) {
+            case ")":
+              content = "\uE030";
+              break;
+            case "}":
+              content = "\uE001";
+              break;
+            case "]":
+              content = "\uE031";
+              break;
+          }
+          this.createChild(content_line, content, "start-bar");
+        }
       }
     }
-    return values.join(""); // sans virgules
   }
 
-  public changeSelectedMeasure(index: number) {
-    const measureStart = this.measuresStartEndIndexes.start[index];
-    const measureEnd = this.measuresStartEndIndexes.end[index];
-    for (let i = 0; i < this.gridMeasures.length; i++) {
-      if (i >= measureStart && i <= measureEnd) {
-        this.gridMeasures[i].classList.add("selected");
-      } else {
-        this.gridMeasures[i].classList.remove("selected");
-      }
-    }
+  private createChild(container: HTMLDivElement, content: string, className?: string) {
+    const el = document.createElement("div");
+    el.innerText = content;
+    el.className = className || "";
+    container.appendChild(el);
   }
 
   destroy(): void {}
