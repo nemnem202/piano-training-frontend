@@ -4,10 +4,8 @@ import { PlaylistDAO } from "../../../core/services/data/playlistDAO";
 import type { Router } from "../../../app/router";
 import { AppManager } from "../../../app/appManager";
 import { PlaylistInterpreter } from "../../../core/services/converters/ireal-decoder/decoder";
-import type { Playlist } from "../../../core/types/playlist";
-import { v4 } from "uuid";
 import { IrealConverter } from "../../../core/services/converters/ireal-converter/irealConverter";
-import type { PlaylistIreal } from "../../../core/types/decoder";
+import { Spinner } from "../spinner/spinner";
 
 export class ImportModal extends Component {
   modal: HTMLDivElement | null = null;
@@ -26,6 +24,7 @@ export class ImportModal extends Component {
   // --- Initialisation des éléments ---
   private initializeElements() {
     this.modal = this.content.querySelector(".import-modal") as HTMLDivElement;
+
     if (!this.modal) return;
     this.router = AppManager.getInstance().router;
 
@@ -134,6 +133,11 @@ export class ImportModal extends Component {
     const regex = /^irealb:\/\/.*/;
     if (regex.test(url)) {
       this.processPlaylistCreation(url);
+      const spinner = new Spinner(50);
+      if (!this.modal) return;
+      this.modal.innerHTML = "<div></div>";
+      this.modal.appendChild(spinner.content);
+      this.modal.innerHTML += "<div></div>";
     } else {
       console.error("lien invalide");
     }

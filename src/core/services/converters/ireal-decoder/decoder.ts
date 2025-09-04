@@ -9,46 +9,50 @@ export class PlaylistInterpreter {
 
   constructor(ireal: string) {
     const playlistEncoded = /.*?(irealb(?:ook)?):\/\/([^"]*)/.exec(ireal);
+    this.songs = [];
     if (!playlistEncoded) {
-      this.songs = [];
       console.error("[ireal-musicxml] Invalid iReal Pro URL format");
       return;
     }
 
-    const playlist = decodeURIComponent(playlistEncoded[2]);
-    const parts = playlist.split("===");
-    if (parts.length > 1) {
-      typeof parts.at(-1) === "string" && (this.title = parts.pop()!);
-    }
+    try {
+      const playlist = decodeURIComponent(playlistEncoded[2]);
+      const parts = playlist.split("===");
+      if (parts.length > 1) {
+        typeof parts.at(-1) === "string" && (this.title = parts.pop()!);
+      }
 
-    this.songs = parts
-      .map((part): SongIreal | null => {
-        try {
-          return new SongInterpreter(part, playlistEncoded[1] === "irealbook").getSong();
-        } catch (error) {
-          const errorParts = part.split("=");
-          const title = SongInterpreter.parseTitle(errorParts[0].trim());
-          console.error(`[ireal-musicxml] [${title}] ${error}`);
-          return null;
-        }
-      })
-      .filter((song): song is SongIreal => song !== null)
-      .reduce((songs: SongIreal[], song: SongIreal): SongIreal[] => {
-        if (songs.length > 0) {
-          const lastSong = songs[songs.length - 1];
-          const diffs: Diff[] = diff(lastSong.title, song.title);
-          if (
-            diffs.length > 0 &&
-            diffs[0][0] === 0 &&
-            diffs.every((d) => d[0] === 0 || /^\d+$/.test(d[1]))
-          ) {
-            lastSong.cells = lastSong.cells.concat(song.cells);
-            return songs;
+      this.songs = parts
+        .map((part): SongIreal | null => {
+          try {
+            return new SongInterpreter(part, playlistEncoded[1] === "irealbook").getSong();
+          } catch (error) {
+            const errorParts = part.split("=");
+            const title = SongInterpreter.parseTitle(errorParts[0].trim());
+            console.error(`[ireal-musicxml] [${title}] ${error}`);
+            return null;
           }
-        }
-        songs.push(song);
-        return songs;
-      }, []);
+        })
+        .filter((song): song is SongIreal => song !== null)
+        .reduce((songs: SongIreal[], song: SongIreal): SongIreal[] => {
+          if (songs.length > 0) {
+            const lastSong = songs[songs.length - 1];
+            const diffs: Diff[] = diff(lastSong.title, song.title);
+            if (
+              diffs.length > 0 &&
+              diffs[0][0] === 0 &&
+              diffs.every((d) => d[0] === 0 || /^\d+$/.test(d[1]))
+            ) {
+              lastSong.cells = lastSong.cells.concat(song.cells);
+              return songs;
+            }
+          }
+          songs.push(song);
+          return songs;
+        }, []);
+    } catch (err) {
+      window.alert(err);
+    }
   }
 }
 

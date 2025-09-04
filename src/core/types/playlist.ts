@@ -73,8 +73,8 @@ export type Chord = {
   type: string;
   notes?: number[];
   rootNote?: number[];
-  over?: Chord;
-  alternate?: Chord;
+  over: Chord | null;
+  alternate: Chord | null;
 };
 
 export type Note = {
@@ -87,13 +87,14 @@ export type Cell = {
   comments: string[];
   annotations: annotation[];
   spacer: number;
-  chord?: Chord;
+  chord: Chord | null;
   bars: string;
 };
 
 export type Bar = "single" | "double" | "light-heavy" | "repeat-start" | "repeat-end";
 
 export type Measure = {
+  empty: boolean;
   cells: Cell[];
   notes: Note[];
 };

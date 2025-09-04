@@ -86,6 +86,7 @@ export class IrealConverter {
   static getSongMeasures(cells: CellIreal[]): Measure[] {
     const measuresArray: Measure[] = [];
     const currentMeasure: Measure = {
+      empty: false,
       cells: [],
       notes: [],
     };
@@ -111,11 +112,18 @@ export class IrealConverter {
         cellIr.bars.includes("]") ||
         i + 1 === cells.length
       ) {
+        currentMeasure.empty = this.testIdMeasureEmpty(currentMeasure);
         measuresArray.push(JSON.parse(JSON.stringify(currentMeasure)));
+
         currentMeasure.cells = [];
       }
     }
+
     return measuresArray;
+  }
+
+  static testIdMeasureEmpty(m: Measure): boolean {
+    return m.cells.find((c) => c.chord !== null) ? false : true;
   }
 
   static getSongAnnotations(cell: CellIreal): annotation[] {
@@ -133,6 +141,8 @@ export class IrealConverter {
       type = "TimeChange";
     } else if (flagRegex.test(annot)) {
       type = "Part";
+    } else if (annot.toLowerCase().includes("l")) {
+      type = "RepeatStart";
     } else {
       type = "unknown";
     }
@@ -140,8 +150,8 @@ export class IrealConverter {
     return { content: annot, type: type };
   }
 
-  static convertToChord(chord: ChordIreal | null): Chord | undefined {
-    if (!chord) return;
+  static convertToChord(chord: ChordIreal | null): Chord | null {
+    if (chord === null) return null;
 
     return {
       root: chord.note,

@@ -8,41 +8,101 @@
 .chord-grid-container {
   height: calc(100% - 30px);
   padding: $padding2;
+  padding-top: 5rem;
   background-color: $bg-color;
   width: 100%;
-  font-family: $musical-font;
   font-size: $text-md;
   color: $text;
   display: grid;
+  row-gap: 10rem;
+  // display: flex;
+  // flex-wrap: wrap;
   overflow: scroll;
   box-sizing: border-box;
 }
 
-.chord-grid-measure {
-  position: relative;
+.chord-grid-measure-box {
   display: flex;
-  flex-direction: column;
-  height: 90px;
+  justify-content: space-between;
+  align-items: center;
+  height: $text-md;
+  position: relative;
 }
 
-.chord-grid-measure-line {
-  width: 100%;
-  height: 30px;
+.chord-grid-measure-box div {
+  height: 100%;
+
+  font: $medium-default-font;
+  line-height: 1;
+}
+
+.chord-grid-container > * {
+  overflow: visible;
+  white-space: nowrap;
+}
+
+.end-bar,
+.start-bar {
+  width: 0;
+  display: flex;
+  justify-content: flex-end;
+  font-family: $musical-font !important;
+  line-height: 2 !important;
+}
+
+.musical {
+  // line-height: 1;
+  line-height: 0.5 !important;
+  font-family: $musical-font !important;
+  font-size: $text-lg !important;
+}
+
+.end-bar {
+  order: 999;
+}
+
+.start-bar {
+  order: -1;
+}
+
+.annotation {
+  position: absolute;
+  top: calc(-100% - $padding1);
+  height: 100%;
+}
+
+.comment {
+  position: absolute;
+  top: calc(100% + $padding1);
+  height: 100%;
+}
+
+.part-annotation {
+  outline: $border1;
+  outline-offset: 0;
+  padding: $padding1;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
-.chord-grid-measure-line div {
+.repeat-annotation {
+  width: 100%;
   height: 100%;
-  line-height: 2;
+  border-top: $border1;
+  border-left: $border1;
 }
 
-.chord-grid-measure-line.content {
-  justify-content: space-between;
+.unk-annotation {
+  padding: $padding1;
+  font-size: $text-sm !important;
 }
 
-.chord-grid-measure-line .start-bar {
-  font: $musical-font;
+.box-is-in-current-measure {
+  background-color: $accent;
+}
+.box-is-in-current-measure > div:not(.annotation, .comment) {
+  color: $bg-color;
 }
 
 .chord-grid-container::-webkit-scrollbar,
