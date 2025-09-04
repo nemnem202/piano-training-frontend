@@ -66,17 +66,28 @@
 .new-module-button {
   width: 20rem;
   height: 20rem;
-  border: 1px solid white;
+  border: $border1;
+  border-color: transparent;
   border-radius: $border-radius2;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: $transition1;
+}
+
+.new-module-button:hover {
+  border-color: $accent;
+
+  svg {
+    fill: $accent;
+  }
 }
 
 .new-module-button svg {
   width: 10rem;
   height: 10rem;
   fill: $text;
+  transition: $transition1;
 }
 
 .module-preview {
@@ -87,6 +98,13 @@
   display: flex;
   flex-direction: column;
   cursor: pointer;
+  border: $border1;
+  transition: $transition1;
+  border-color: transparent;
+}
+
+.module-preview:hover {
+  border-color: $accent;
 }
 
 .module-preview-image {

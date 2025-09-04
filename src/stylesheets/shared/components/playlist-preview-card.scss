@@ -6,9 +6,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: fit-content;
+  justify-content: space-between;
+  height: 100%;
   min-width: 20rem;
   cursor: pointer;
+  transition: $transition1;
+  border: $border1;
+  border-color: transparent;
+
   // border: 2px solid white;
 }
 
@@ -32,4 +37,26 @@
   color: $text;
   opacity: $opacity1;
   padding: $padding1;
+}
+
+.playlist-preview-card.new-playlist {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  svg {
+    fill: $text;
+    stroke: $text;
+    height: 50%;
+    width: 50%;
+  }
+}
+
+.playlist-preview-card:hover {
+  border-color: $accent;
+  color: $accent;
+  svg {
+    fill: $accent;
+    stroke: $accent;
+  }
 }

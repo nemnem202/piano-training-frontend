@@ -3,6 +3,9 @@ import home from "./home.html?raw";
 import { playlistTags } from "../../core/settings/playlist";
 import { PlaylistPreviewCard } from "../../shared/components/playlist-preview-card/playlist_preview_card";
 import { PlaylistDAO } from "../../core/services/data/playlistDAO";
+import { Spinner } from "../../shared/components/spinner/spinner";
+import { NewPlaylistButton } from "../../shared/components/new_playlist/new_playlist";
+import { AppManager } from "../../app/appManager";
 
 export class Home extends Page {
   constructor() {
@@ -26,16 +29,31 @@ export class Home extends Page {
 
       const tagsPlaylists = await PlaylistDAO.get_all_with_tag(tag);
 
-      if (tagsPlaylists.length === 0) {
-        console.warn("no playlist found for tag: ", tag);
-        continue;
-      } else {
-        console.log("playlists founded for tag: ", tag, ". the playlist:");
+      if (tag === "Your playground") {
+        const new_playlist = new NewPlaylistButton();
+        cardsContainer.appendChild(new_playlist.content);
+        new_playlist.content.addEventListener("click", () =>
+          AppManager.getInstance().router?.redirect("new")
+        );
       }
 
-      for (const p of tagsPlaylists) {
-        const card = new PlaylistPreviewCard(p);
-        cardsContainer.appendChild(card.content);
+      if (tagsPlaylists.length === 0) {
+        console.warn("no playlist found for tag: ", tag);
+
+        const spinner = new Spinner(50);
+
+        const new_playlist = new NewPlaylistButton();
+
+        new_playlist.content.innerHTML = "";
+
+        new_playlist.content.appendChild(spinner.content);
+
+        cardsContainer.appendChild(new_playlist.content);
+      } else {
+        for (const p of tagsPlaylists) {
+          const card = new PlaylistPreviewCard(p);
+          cardsContainer.appendChild(card.content);
+        }
       }
 
       section.appendChild(title);

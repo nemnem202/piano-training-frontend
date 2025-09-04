@@ -25,6 +25,7 @@
   text-align: center;
   font: $small-font;
   color: $text;
+  transition: $transition1;
 
   .small {
     opacity: $opacity1;
@@ -34,6 +35,10 @@
 
 .import-modal.dragover {
   border-color: $highlight;
+}
+
+.import-modal:hover {
+  border-color: $accent;
 }
 
 .urlInputContainer {
