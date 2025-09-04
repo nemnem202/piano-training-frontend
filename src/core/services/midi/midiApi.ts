@@ -21,7 +21,8 @@ export class MidiApi {
   private onMidiSuccess(midiAccess: MIDIAccess) {
     const inputs = Array.from(midiAccess.inputs.values());
 
-    console.log("Inputs:", inputs);
+    console.log("[Inputs] :");
+    console.table(inputs);
 
     inputs.forEach((input) => {
       input.onmidimessage = (ev) => this.handleMidiMessage(ev);

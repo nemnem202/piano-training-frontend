@@ -32,7 +32,6 @@
 .chord-grid-measure-box div {
   height: 100%;
   font: $medium-default-font;
-  line-height: 1;
 }
 
 .chord-grid-container > * {
@@ -42,7 +41,6 @@
 
 .end-bar,
 .start-bar {
-  width: 0;
   display: flex;
   justify-content: flex-end;
   font-family: $musical-font !important;

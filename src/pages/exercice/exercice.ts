@@ -53,7 +53,6 @@ export class Exercice extends Page {
     }
 
     this.updateDimensions();
-    this.drawGrid();
     this.addModules();
     this.addHeader();
     this.addMenu();
@@ -94,6 +93,14 @@ export class Exercice extends Page {
     const magnet = new ExerciceMagnet();
 
     this.content.appendChild(magnet.content);
+
+    if (this.magnetism) {
+      this.drawGrid();
+      magnet.content.classList.add("active");
+    } else {
+      this.clearCanvas();
+      magnet.content.classList.remove("active");
+    }
 
     magnet.content.addEventListener("click", () => {
       this.magnetism = !this.magnetism;

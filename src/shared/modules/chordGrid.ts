@@ -25,7 +25,8 @@ export class ChordGrid extends Module {
       this.gridContainer.innerText = "No chord";
       return;
     }
-    console.log("measures: ", this.song.measures);
+
+    console.log("[SONG LOADED] : ", this.song.measures);
 
     for (const [index, m] of this.song.measures.entries()) {
       this.fillMeasure(this.gridContainer, m, index);
@@ -63,7 +64,7 @@ export class ChordGrid extends Module {
         let child_content: string = "";
         switch (bar[0]) {
           case "{":
-            child_content = "\uE000";
+            child_content = "\uE040";
             break;
           case "(":
             child_content = "\uE030";
@@ -72,6 +73,7 @@ export class ChordGrid extends Module {
             child_content = "\uE031";
             break;
         }
+        if (bar[0] === "{") console.log("OEOEOEOOE", cell);
         this.createChild(content, child_content, "start-bar");
       }
     } else {
@@ -174,7 +176,7 @@ export class ChordGrid extends Module {
             child_content = "\uE030";
             break;
           case "}":
-            child_content = "\uE001";
+            child_content = "\uE041";
             break;
           case "]":
             child_content = "\uE031";

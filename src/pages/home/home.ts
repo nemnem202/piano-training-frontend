@@ -27,11 +27,10 @@ export class Home extends Page {
       const tagsPlaylists = await PlaylistDAO.get_all_with_tag(tag);
 
       if (tagsPlaylists.length === 0) {
-        console.error("no playlist found for tag: ", tag);
+        console.warn("no playlist found for tag: ", tag);
         continue;
       } else {
         console.log("playlists founded for tag: ", tag, ". the playlist:");
-        console.log(tagsPlaylists);
       }
 
       for (const p of tagsPlaylists) {

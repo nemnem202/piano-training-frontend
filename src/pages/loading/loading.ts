@@ -4,7 +4,7 @@ import { Spinner } from "../../shared/components/spinner/spinner";
 export class LoadingPage extends Page {
   constructor() {
     super("", "loading-page");
-    console.warn("[Loading...]");
+    console.log("[Loading...]");
     this.content.style.display = "flex";
     this.content.style.justifyContent = "center";
     this.content.style.alignItems = "center";
