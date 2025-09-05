@@ -1,5 +1,6 @@
 import diff from "fast-diff";
 import type { CellIreal, ChordIreal, SongIreal } from "../../../types/decoder";
+import { DEFAULT_BPM } from "../../../types/config";
 
 type Diff = [-1 | 0 | 1, string];
 
@@ -90,7 +91,7 @@ export class SongInterpreter {
       this.key = "";
       this.transpose = 0;
       this.groove = "";
-      this.bpm = 0;
+      this.bpm = DEFAULT_BPM;
       this.repeats = 0;
       return;
     }
@@ -104,7 +105,7 @@ export class SongInterpreter {
       this.cells = this.parse(parts[5] || "");
       this.transpose = 0;
       this.groove = "default";
-      this.bpm = 0;
+      this.bpm = DEFAULT_BPM;
       this.repeats = 3;
     } else {
       this.title = SongInterpreter.parseTitle(parts[0].trim());
@@ -113,7 +114,7 @@ export class SongInterpreter {
       this.key = parts[4];
       this.transpose = +parts[5] || 0;
       this.groove = parts[7];
-      this.bpm = +parts[8];
+      this.bpm = +parts[8] > 0 ? +parts[8] : DEFAULT_BPM;
       this.repeats = +parts[9] || 3;
       const music = parts[6].split("1r34LbKcu7");
       this.cells = this.parse(unscramble(music[1] || ""));

@@ -13,6 +13,7 @@ import type {
 } from "../../../types/playlist";
 import { PlaylistDAO } from "../../data/playlistDAO";
 import { DEFAULT_EXERCICE_CONFIG } from "../../../settings/defaultExercice";
+import { available_notes } from "../../../types/config";
 
 export class IrealConverter {
   static convertPlaylist(playlist: PlaylistIreal): Playlist {
@@ -63,7 +64,17 @@ export class IrealConverter {
   }
 
   static getSongKey(key: string): Key {
-    return { root: 0, harm: "key" };
+    const sortedNotes = [...available_notes].sort((a, b) => b.length - a.length);
+
+    const rootNote = sortedNotes.find((note) => key.toUpperCase().startsWith(note.toUpperCase()));
+    if (!rootNote) {
+      throw new Error(`Aucune note trouvée dans la clé : ${key}`);
+    }
+
+    const root = available_notes.findIndex((n) => n.toUpperCase() === rootNote.toUpperCase());
+    const harm = key.substring(rootNote.length);
+
+    return { root, harm };
   }
 
   static getSongArmature(cells: CellIreal[]): Armature {

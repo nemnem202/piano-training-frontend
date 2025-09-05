@@ -1,23 +1,28 @@
 import type { ModuleDTO } from "./modules";
 
-export type AvailableNote =
-  | "C"
-  | "C#"
-  | "D"
-  | "D#"
-  | "Db"
-  | "E"
-  | "Eb"
-  | "F"
-  | "F#"
-  | "G"
-  | "Gb"
-  | "G#"
-  | "A"
-  | "A#"
-  | "Ab"
-  | "B"
-  | "Bb";
+export const available_notes = [
+  "C",
+  "C#",
+  "D",
+  "D#",
+  "Db",
+  "E",
+  "Eb",
+  "F",
+  "F#",
+  "G",
+  "Gb",
+  "G#",
+  "A",
+  "A#",
+  "Ab",
+  "B",
+  "Bb",
+] as const;
+
+export const DEFAULT_BPM = 100;
+
+export type AvailableNote = (typeof available_notes)[number];
 
 export type noteDTO = {
   value: number;

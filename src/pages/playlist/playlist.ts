@@ -2,6 +2,7 @@ import { AppManager } from "../../app/appManager";
 import { Page } from "../../core/abstract_classes/page";
 import { PlaylistDAO } from "../../core/services/data/playlistDAO";
 import { difficulties } from "../../core/settings/playlist";
+import { available_notes } from "../../core/types/config";
 import { type Difficulty, type Playlist, type Song } from "../../core/types/playlist";
 import { SearchBar } from "../../shared/components/searchBar/searchBar";
 import template from "./playlist.html?raw";
@@ -164,7 +165,7 @@ export class PlaylistPage extends Page {
           <div class="module-preview-author">${song.author}</div>
         </div>
         <div class="module-preview-key-bpm">
-          <div class="module-preview-key">${song.key}</div>
+          <div class="module-preview-key">${available_notes[song.key.root]} ${song.key.harm}</div>
           <div class="module-preview-bpm">${song.bpm}</div>
         </div>
       </div>
