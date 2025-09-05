@@ -18,6 +18,8 @@ export abstract class Module extends Component {
 
   protected windowBarHeight = 30;
 
+  private full_screen: boolean = false;
+
   abstract destroy(): void;
 
   abstract start(): void;
@@ -90,8 +92,10 @@ export abstract class Module extends Component {
   private initWindowBar() {
     const moveZone = this.createMoveZone();
     const closeButton = this.createCloseButton();
+    const full_size_btn = this.create_full_screen_button();
 
     this.windowBar.appendChild(moveZone);
+    this.windowBar.appendChild(full_size_btn);
     this.windowBar.appendChild(closeButton);
     this.content.appendChild(this.windowBar);
   }
@@ -113,6 +117,16 @@ export abstract class Module extends Component {
     return closeButton;
   }
 
+  private create_full_screen_button(): HTMLDivElement {
+    const full_screen_button = document.createElement("div");
+    full_screen_button.className = "module-full-screen-button";
+    full_screen_button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M120-120v-240h80v104l124-124 56 56-124 124h104v80H120Zm516-460-56-56 124-124H600v-80h240v240h-80v-104L636-580Z"/></svg>`;
+    full_screen_button.addEventListener("click", (e) =>
+      this.handle_full_screen_button_hit(e, full_screen_button)
+    );
+    return full_screen_button;
+  }
+
   setPosition(x: number, y: number) {
     if (!this.container) return;
     const maxX = this.container.appDimensions.width - this.bounds.width;
@@ -124,6 +138,7 @@ export abstract class Module extends Component {
     const { x: finalX, y: finalY } = this.moveStrategy.getPosition(clampedX, clampedY, this);
     this.bounds.x = finalX;
     this.bounds.y = finalY;
+
     this.content.style.transform = `translate3d(${finalX}px, ${finalY}px, 0)`;
   }
 
@@ -149,6 +164,27 @@ export abstract class Module extends Component {
     console.log("destroy module...");
     this.destroy();
     this.container.removeModule(this);
+  }
+
+  private handle_full_screen_button_hit(e: MouseEvent, container: HTMLDivElement) {
+    if (!this.container) return;
+    e.stopPropagation();
+    this.full_screen = !this.full_screen;
+    if (!this.full_screen) {
+      console.log("min");
+
+      this.resize(this.container.appDimensions.width / 2, this.container.appDimensions.height / 2);
+      this.setPosition(
+        this.container.appDimensions.width / 4,
+        this.container.appDimensions.height / 4
+      );
+      container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M120-120v-240h80v104l124-124 56 56-124 124h104v80H120Zm516-460-56-56 124-124H600v-80h240v240h-80v-104L636-580Z"/></svg>`;
+    } else {
+      console.log("full");
+      this.setPosition(0, 0);
+      this.resize(this.container.appDimensions.width, this.container.appDimensions.height);
+      container.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m177-120-57-57 184-183H200v-80h240v240h-80v-104L177-120Zm343-400v-240h80v104l183-184 57 57-184 183h104v80H520Z"/></svg>`;
+    }
   }
 
   private handleWindowClick() {

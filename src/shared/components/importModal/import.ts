@@ -44,6 +44,12 @@ export class ImportModal extends Component {
         this.readUrl(this.urlInput.value);
       }
     });
+
+    const link = document.querySelector(".browse-link");
+
+    // if (!link) return;
+
+    // link.addEventListener("click", (e) => {});
   }
 
   // --- Binding des événements ---
@@ -102,6 +108,11 @@ export class ImportModal extends Component {
       this.readHtmlFile(this.fileDraggedInput.files[0]);
     }
   };
+
+  // private onLinkClick = (e:MouseEvent)=>{
+  //   e.stopPropagation()
+
+  // }
 
   // --- Lecture et extraction HTML ---
   private readHtmlFile(file: File) {

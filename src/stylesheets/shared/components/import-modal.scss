@@ -45,3 +45,12 @@
   display: flex;
   gap: $padding1;
 }
+
+.browse-link {
+  color: $text;
+  margin-top: $padding5;
+}
+
+.browse-link:hover {
+  color: $accent;
+}

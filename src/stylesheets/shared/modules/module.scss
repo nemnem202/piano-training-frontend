@@ -48,3 +48,19 @@
   background-color: $warm;
   fill: $bg-color;
 }
+
+.module-full-screen-button {
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: $transition1;
+  border: $border1;
+  border-color: transparent;
+  background-color: $bg-color;
+}
+
+.module-full-screen-button:hover {
+  fill: $accent;
+  border-color: $accent;
+}
