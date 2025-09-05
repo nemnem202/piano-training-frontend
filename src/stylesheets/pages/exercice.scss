@@ -11,7 +11,8 @@
   }
 }
 
-.exercice-magnet {
+.exercice-magnet,
+.exercice-save-button {
   width: 5rem;
   height: 5rem;
   position: absolute;
@@ -37,15 +38,23 @@
   }
 }
 
-.exercice-magnet:hover {
-  border-color: $accent;
+.exercice-save-button {
+  left: calc((5rem + $padding2) * 2);
+
   svg {
-    fill: $accent;
+    width: 3.5rem;
+    height: 3.5rem;
   }
 }
 
-.exercice-magnet:hover {
+.exercice-magnet:hover,
+.exercice-save-button:hover,
+.exercice-menu:hover {
+  border-color: $accent;
   opacity: 1;
+  svg {
+    fill: $accent;
+  }
 }
 
 .exercice-magnet.active {

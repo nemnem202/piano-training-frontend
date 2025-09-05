@@ -1,6 +1,6 @@
 import { Module } from "../../core/abstract_classes/module";
 import type { ExerciceStore } from "../../core/services/stores/exerciceStore";
-import type { Bounds } from "../../core/types/modules";
+import type { Bounds, ModuleDTO } from "../../core/types/modules";
 import type { Cell, Measure, Song } from "../../core/types/playlist";
 
 const GRID_COLUMNS = 16;
@@ -33,6 +33,15 @@ export class ChordGrid extends Module {
     }
 
     this.change_selected_measure(0);
+  }
+
+  export_configuration(): ModuleDTO {
+    return {
+      type: "ChordGrid",
+      params: {
+        bounds: this.convertBounds(this.bounds),
+      },
+    };
   }
 
   private fillMeasure(div: HTMLDivElement, m: Measure, index: number) {

@@ -4,11 +4,13 @@ import { Page } from "../../core/abstract_classes/page";
 import { PlaylistDAO } from "../../core/services/data/playlistDAO";
 import { ExerciceStore } from "../../core/services/stores/exerciceStore";
 import { moduleRegistry } from "../../core/settings/moduleRegistry";
-import type { Corner, Dimensions, Edge } from "../../core/types/modules";
+import type { ExerciceConfigDTO } from "../../core/types/config";
+import type { Corner, Dimensions, Edge, ModuleDTO } from "../../core/types/modules";
 import type { Song } from "../../core/types/playlist";
 import { ExerciceHeader } from "../../shared/components/exerciceHeader/exerciceHeader";
 import { ExerciceMagnet } from "../../shared/components/exerciceMagnet/exerciceMagnet";
 import { ExerciceMenu } from "../../shared/components/exerciceMenu/exerciceMenu";
+import { Spinner } from "../../shared/components/spinner/spinner";
 
 export class Exercice extends Page {
   private store = new ExerciceStore();
@@ -16,15 +18,17 @@ export class Exercice extends Page {
   private ctx: CanvasRenderingContext2D | null = null;
   public song: Song | undefined;
   public gridCellSize = 30;
-  public magnetism: boolean | undefined = true;
+  public magnetism: boolean = true;
   public appDimensions: Dimensions = { width: 0, height: 0 };
   public modules: Map<number, Module> = new Map();
   private topZIndex = 0;
   public draggedModule: Module | null = null;
   public resizedModule: { module: Module; edge: Edge | Corner }[] = [];
+  private song_id: string = "";
 
   constructor(params: Record<string, string>) {
     super("", "exercice-container", params);
+    this.song_id = params.id;
     this.grid = document.createElement("canvas");
     this.grid.className = "exercice-grid";
     this.ctx = this.grid.getContext("2d");
@@ -57,6 +61,7 @@ export class Exercice extends Page {
     this.addHeader();
     this.addMenu();
     this.addMagnet();
+    this.add_save_button();
 
     window.addEventListener("resize", () => {
       this.clearCanvas();
@@ -65,6 +70,24 @@ export class Exercice extends Page {
     });
 
     this.listenMouseEvents();
+  }
+
+  public async save_configuration(): Promise<void> {
+    const modules_DTO: ModuleDTO[] = [];
+
+    for (const mod of this.modules) {
+      modules_DTO.push(mod[1].export_configuration());
+    }
+
+    this.modules.forEach((m) => {});
+    const config: ExerciceConfigDTO = {
+      magnetism: this.magnetism,
+      bpm: 120,
+      key: "C",
+      modules: modules_DTO,
+    };
+
+    await PlaylistDAO.update_exercice_config(config, this.song_id);
   }
 
   private addModules() {
@@ -115,6 +138,21 @@ export class Exercice extends Page {
         this.clearCanvas();
         magnet.content.classList.remove("active");
       }
+    });
+  }
+
+  private add_save_button() {
+    const save_button = document.createElement("div");
+    this.content.appendChild(save_button);
+    save_button.className = "exercice-save-button";
+    save_button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/></svg>`;
+    save_button.addEventListener("click", () => {
+      const spinner = new Spinner(20);
+      save_button.innerHTML = "";
+      save_button.appendChild(spinner.content);
+      this.save_configuration().then(() => {
+        save_button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/></svg>`;
+      });
     });
   }
 

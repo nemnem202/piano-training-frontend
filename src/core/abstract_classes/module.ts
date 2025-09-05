@@ -1,6 +1,6 @@
 import type { Exercice } from "../../pages/exercice/exercice";
 import type { ExerciceStore } from "../services/stores/exerciceStore";
-import type { Bounds, Corner, Edge, Position } from "../types/modules";
+import type { Bounds, Corner, Edge, ModuleDTO, Position } from "../types/modules";
 import { Component } from "./component";
 
 const RESIZE_TOLERANCE = 10;
@@ -18,11 +18,13 @@ export abstract class Module extends Component {
 
   protected windowBarHeight = 30;
 
-  private full_screen: boolean = false;
+  protected full_screen: boolean = false;
 
   abstract destroy(): void;
 
   abstract start(): void;
+
+  abstract export_configuration(): ModuleDTO;
 
   constructor(bounds: Bounds, store: ExerciceStore) {
     super("div", "");
@@ -56,6 +58,17 @@ export abstract class Module extends Component {
     bounds.height = (bounds.height / 100) * containerRect.height;
 
     return bounds;
+  }
+
+  protected convertBounds(bounds: Bounds): Bounds {
+    if (!this.container) return { x: 0, y: 0, height: 50, width: 0 };
+    const containerRect = this.container.content.getBoundingClientRect();
+    return {
+      x: (bounds.x / containerRect.width) * 100,
+      y: (bounds.y / containerRect.height) * 100,
+      width: (bounds.width / containerRect.width) * 100,
+      height: (bounds.height / containerRect.height) * 100,
+    };
   }
 
   private init() {

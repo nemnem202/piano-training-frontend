@@ -2,7 +2,7 @@ import { Module } from "../../core/abstract_classes/module";
 import { MidiApi } from "../../core/services/midi/midiApi";
 import { ExerciceStore } from "../../core/services/stores/exerciceStore";
 import type { noteDTO } from "../../core/types/config";
-import type { Bounds } from "../../core/types/modules";
+import type { Bounds, ModuleDTO } from "../../core/types/modules";
 
 const OCTAVES_NUMBER = 7;
 const WHITE_KEYS = [1, 3, 5, 7, 9, 11, 13];
@@ -27,6 +27,15 @@ export class Piano extends Module {
   }
 
   start(): void {}
+
+  export_configuration(): ModuleDTO {
+    return {
+      type: "Piano",
+      params: {
+        bounds: this.convertBounds(this.bounds),
+      },
+    };
+  }
 
   destroy(): void {
     this.midiApi = null;

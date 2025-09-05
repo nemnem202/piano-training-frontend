@@ -2,7 +2,7 @@ import { Module } from "../../core/abstract_classes/module";
 import { SynthApi } from "../../core/services/sound/synthApi";
 import type { ExerciceStore } from "../../core/services/stores/exerciceStore";
 import { defaultOscillator } from "../../core/settings/synth";
-import type { Bounds } from "../../core/types/modules";
+import type { Bounds, ModuleDTO } from "../../core/types/modules";
 import type { Oscillator, SynthConfig } from "../../core/types/synth";
 import type { RadioItem, RadioItems } from "../../core/types/ui";
 import { Knob } from "../components/knob/knob";
@@ -41,6 +41,15 @@ export class SynthetizerModule extends Module {
   }
 
   start(): void {}
+
+  export_configuration(): ModuleDTO {
+    return {
+      type: "SynthetizerModule",
+      params: {
+        bounds: this.convertBounds(this.bounds),
+      },
+    };
+  }
 
   destroy() {
     this.synthApi?.destroy();
