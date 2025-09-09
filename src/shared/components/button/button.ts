@@ -8,6 +8,7 @@ export class Button extends Component {
     }
   ) {
     super("button", value);
+    this.content.className = "button1";
     this.content.addEventListener("click", () => onClick());
   }
 }
