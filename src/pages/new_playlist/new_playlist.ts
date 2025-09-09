@@ -9,8 +9,8 @@ export class newPlaylist extends PlaylistPage {
     if (!infos) return;
     const import_btn = document.createElement("button");
     const save_btn = document.createElement("button");
-    import_btn.className = "playlist-import-button";
-    save_btn.className = "playlist-save-button";
+    import_btn.className = "playlist-import-button button1";
+    save_btn.className = "playlist-save-button button1";
     import_btn.innerText = "import";
     save_btn.innerText = "save";
     const container = document.createElement("div");

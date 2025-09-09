@@ -20,7 +20,7 @@ export class ExerciceStore extends Store<ExerciceStoreState> {
   }
 
   public removeNote(note: noteDTO) {
-    if (!this.noteValues.has(note.value)) return; // pas présent
+    if (!this.noteValues.has(note.value)) return;
     this.noteValues.delete(note.value);
 
     const notes = this.getState("notes") as noteDTO[];

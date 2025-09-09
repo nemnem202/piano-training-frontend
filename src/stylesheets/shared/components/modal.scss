@@ -1,0 +1,40 @@
+@use "../../variables" as *;
+
+.modal-container {
+  background-color: rgba(0, 0, 0, 0.295);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.remove-song-modal-container {
+  width: 50rem;
+  height: 20rem;
+  background-color: $bg-color;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  color: $text;
+  border: $border1;
+}
+
+.remove-song-modal-btn-container {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  gap: $padding1;
+  padding: $padding1;
+}
+
+.remove-song-modal-text {
+  font-size: $text-md;
+  font: $medium-default-font;
+  text-align: center;
+  width: 80%;
+}

@@ -53,7 +53,18 @@
 }
 
 .playlist-import-button {
-  background-color: transparent !important;
+  border-color: transparent;
+  margin-right: $padding1;
+}
+
+.playlist-import-button:hover {
+  border: $border1;
+}
+
+.playlist-save-button,
+.playlist-import-button {
+  font-size: $text-sm;
+  display: inline;
 }
 
 .playlist-modules {
@@ -101,6 +112,7 @@
   border: $border1;
   transition: $transition1;
   border-color: transparent;
+  position: relative;
 }
 
 .module-preview:hover {
