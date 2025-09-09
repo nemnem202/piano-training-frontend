@@ -1,8 +1,9 @@
 import { AppManager } from "../../../app/appManager";
 import { Component } from "../../../core/abstract_classes/component";
+import { PlaylistDAO } from "../../../core/services/data/playlistDAO";
 import type { Playlist } from "../../../core/types/playlist";
 import { RemoveButton } from "../remove_button/removeButton";
-import { RemoveSongModal } from "../removeSongModal/removeSongModal";
+import { RemovePlaylist } from "../removePlaylistModal/removePlaylist";
 
 export class PlaylistPreviewCard extends Component {
   constructor(p: Playlist) {
@@ -17,7 +18,7 @@ export class PlaylistPreviewCard extends Component {
     </div>
     `;
 
-    const remove_button = new RemoveButton(this.remove(p.Id), this.content, 30);
+    const remove_button = new RemoveButton(() => this.remove(p.Id, p.title), this.content, 30);
 
     this.content.appendChild(remove_button.content);
 
@@ -26,5 +27,7 @@ export class PlaylistPreviewCard extends Component {
     });
   }
 
-  private remove = (id: string): any => {};
+  private remove = (id: string, title: string): any => {
+    const modal = new RemovePlaylist(id, title);
+  };
 }

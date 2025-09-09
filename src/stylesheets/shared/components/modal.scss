@@ -12,7 +12,8 @@
   height: 100%;
 }
 
-.remove-song-modal-container {
+.remove-song-modal-container,
+.remove-playlist-modal-container {
   width: 50rem;
   height: 20rem;
   background-color: $bg-color;
@@ -24,7 +25,8 @@
   border: $border1;
 }
 
-.remove-song-modal-btn-container {
+.remove-song-modal-btn-container,
+.remove-playlist-modal-btn-container {
   display: flex;
   width: 100%;
   justify-content: flex-end;
@@ -32,7 +34,8 @@
   padding: $padding1;
 }
 
-.remove-song-modal-text {
+.remove-song-modal-text,
+.remove-playlist-modal-text {
   font-size: $text-md;
   font: $medium-default-font;
   text-align: center;

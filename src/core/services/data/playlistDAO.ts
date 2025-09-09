@@ -42,6 +42,23 @@ export class PlaylistDAO {
     return await db.get("playlists", id);
   }
 
+  public static async remove_playlist(id: string): Promise<void> {
+    const db = await PlaylistDAO.getDB();
+
+    const [songs, playlist] = await Promise.all([db.getAll("songs"), this.get_playlist(id)]);
+
+    if (playlist) {
+      const removeSongs = songs
+        .filter((s) => playlist.songs.includes(s.id))
+        .map((s) => this.remove_song(s.id)); // <-- supprimer par song.id
+
+      // On supprime playlist et chansons en parallèle
+      await Promise.all([...removeSongs, db.delete("playlists", id)]);
+    } else {
+      await db.delete("playlists", id);
+    }
+  }
+
   public static async get_all_with_tag(tag: PlaylistTag): Promise<Playlist[]> {
     const db = await PlaylistDAO.getDB();
     const playlists = await db.getAll("playlists");
