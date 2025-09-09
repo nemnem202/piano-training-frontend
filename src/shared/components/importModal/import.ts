@@ -1,4 +1,3 @@
-import { Component } from "../../../core/abstract_classes/component";
 import importTemplate from "./import.html?raw";
 import { PlaylistDAO } from "../../../core/services/data/playlistDAO";
 import type { Router } from "../../../app/router";
@@ -6,6 +5,7 @@ import { AppManager } from "../../../app/appManager";
 import { PlaylistInterpreter } from "../../../core/services/converters/ireal-decoder/decoder";
 import { IrealConverter } from "../../../core/services/converters/ireal-converter/irealConverter";
 import { Spinner } from "../spinner/spinner";
+import { Component } from "../../../core/abstract_classes/component";
 
 export class ImportModal extends Component {
   modal: HTMLDivElement | null = null;
@@ -45,7 +45,7 @@ export class ImportModal extends Component {
       }
     });
 
-    const link = document.querySelector(".browse-link");
+    // const link = document.querySelector(".browse-link");
 
     // if (!link) return;
 
