@@ -28,9 +28,11 @@ export class PlaylistPage extends Page {
   }
 
   private async init() {
+    this.init_songs_container();
     this.load_and_show_songs();
     this.setTitle();
     this.setMenu();
+    this.setSearchBar();
   }
 
   private async load_and_show_songs() {
@@ -38,10 +40,14 @@ export class PlaylistPage extends Page {
     const playlistDTO = await PlaylistDAO.get_playlist(this.id);
     if (playlistDTO) {
       this.playlist = playlistDTO;
-      PlaylistDAO.get_all_songs_of_a_playlist(this.playlist).then((s) => {
-        this.songs = s;
-        this.showSongs(this.songs).then(() => this.setSearchBar());
-      });
+      for (const id of this.playlist.songs) {
+        PlaylistDAO.get_song(id).then((song) => {
+          if (song) {
+            this.songs.push(song);
+            this.add_song(song);
+          }
+        });
+      }
     }
   }
 
@@ -145,11 +151,10 @@ export class PlaylistPage extends Page {
   }
 
   private updateSearchBarFromBrowsedArray(array: Song[]) {
-    console.log(array);
-    this.showSongs(array);
+    this.show_songs(array);
   }
 
-  private async showSongs(array: Song[]) {
+  private init_songs_container() {
     const container = this.content.querySelector(".playlist-modules");
 
     if (!container) return;
@@ -158,10 +163,16 @@ export class PlaylistPage extends Page {
       <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
     </svg>
   </div>`;
-    for (const song of array) {
-      const card = document.createElement("div");
-      card.className = "module-preview";
-      card.innerHTML += `
+  }
+
+  private add_song(song: Song) {
+    const container = this.content.querySelector(".playlist-modules");
+
+    if (!container) return;
+
+    const card = document.createElement("div");
+    card.className = "module-preview";
+    card.innerHTML += `
 
       <div class="module-preview-image"></div>
       <div class="module-preview-infos">
@@ -176,21 +187,27 @@ export class PlaylistPage extends Page {
       </div>
 
   `;
-      const remove_button = new RemoveButton(
-        () => this.show_remove_modal(song.id, song.title),
-        card,
-        30
-      );
-      card.appendChild(remove_button.content);
-      // this.songElements[song.title] = card;
-      container.appendChild(card);
-      card.addEventListener("click", () => {
-        AppManager.getInstance().router?.redirect(`exercices/${song.id}`);
-      });
+    const remove_button = new RemoveButton(
+      () => this.show_remove_modal(song.id, song.title),
+      card,
+      30
+    );
+    card.appendChild(remove_button.content);
+    // this.songElements[song.title] = card;
+    container.appendChild(card);
+    card.addEventListener("click", () => {
+      AppManager.getInstance().router?.redirect(`exercices/${song.id}`);
+    });
+  }
+
+  private show_songs(array: Song[]) {
+    this.init_songs_container();
+    for (const song of array) {
+      this.add_song(song);
     }
   }
 
   private show_remove_modal(id: string, title: string): any {
-    const modal = new RemoveSongModal(id, title, () => window.location.reload());
+    new RemoveSongModal(id, title, () => window.location.reload());
   }
 }

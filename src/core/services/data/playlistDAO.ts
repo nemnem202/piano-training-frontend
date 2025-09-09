@@ -116,13 +116,13 @@ export class PlaylistDAO {
     return await db.delete("songs", id);
   }
 
-  public static async get_all_songs_of_a_playlist(playlist: Playlist): Promise<Song[]> {
-    const songs = [];
-    for (const id of playlist.songs) {
-      const song = await this.get_song(id);
-      if (!song) continue;
-      songs.push(song);
-    }
-    return songs;
-  }
+  // public static async get_all_songs_of_a_playlist(playlist: Playlist): Promise<Song[]> {
+  //   const songs = [];
+  //   for (const id of playlist.songs) {
+  //     const song = await this.get_song(id);
+  //     if (!song) continue;
+  //     songs.push(song);
+  //   }
+  //   return songs;
+  // }
 }
