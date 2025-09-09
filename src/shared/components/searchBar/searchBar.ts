@@ -20,9 +20,9 @@ export class SearchBar<T extends Record<string, unknown>> extends Component {
     input.addEventListener("input", () => {
       if (input.value.length > 0) {
         const browsedArray = Browser.browse(input.value, key, this.array);
-        callback(browsedArray);
+        this.callback(browsedArray);
       } else {
-        callback(array);
+        this.callback(array);
       }
     });
   }

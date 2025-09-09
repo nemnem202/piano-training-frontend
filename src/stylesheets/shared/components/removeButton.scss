@@ -1,0 +1,29 @@
+@use "../../variables" as *;
+
+.remove-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  border-radius: 50%;
+  transition: $transition1;
+  background-color: transparent;
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    width: 70%;
+    height: 70%;
+    fill: $text;
+    transition: $transition1;
+  }
+}
+
+.remove-button:hover {
+  background-color: $accent_opacity;
+
+  svg {
+    fill: $accent;
+  }
+}

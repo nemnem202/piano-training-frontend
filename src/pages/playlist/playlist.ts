@@ -4,6 +4,8 @@ import { PlaylistDAO } from "../../core/services/data/playlistDAO";
 import { difficulties } from "../../core/settings/playlist";
 import { available_notes } from "../../core/types/config";
 import { type Difficulty, type Playlist, type Song } from "../../core/types/playlist";
+import { RemoveButton } from "../../shared/components/remove_button/removeButton";
+import { RemoveSongModal } from "../../shared/components/removeSongModal/removeSongModal";
 import { SearchBar } from "../../shared/components/searchBar/searchBar";
 import template from "./playlist.html?raw";
 
@@ -22,12 +24,18 @@ export class PlaylistPage extends Page {
   constructor(params: Record<string, string>) {
     super(template, "playlist-page-container", params);
     this.id = decodeURIComponent(params.id);
-    this.init(this.id);
+    this.init();
   }
 
-  private async init(id: string) {
-    if (!id) return;
-    const playlistDTO = await PlaylistDAO.get_playlist(id);
+  private async init() {
+    this.load_and_show_songs();
+    this.setTitle();
+    this.setMenu();
+  }
+
+  private async load_and_show_songs() {
+    if (!this.id) return;
+    const playlistDTO = await PlaylistDAO.get_playlist(this.id);
     if (playlistDTO) {
       this.playlist = playlistDTO;
       PlaylistDAO.get_all_songs_of_a_playlist(this.playlist).then((s) => {
@@ -35,9 +43,6 @@ export class PlaylistPage extends Page {
         this.showSongs(this.songs).then(() => this.setSearchBar());
       });
     }
-
-    this.setTitle();
-    this.setMenu();
   }
 
   private setTitle() {
@@ -171,11 +176,21 @@ export class PlaylistPage extends Page {
       </div>
 
   `;
+      const remove_button = new RemoveButton(
+        () => this.show_remove_modal(song.id, song.title),
+        card,
+        30
+      );
+      card.appendChild(remove_button.content);
       // this.songElements[song.title] = card;
       container.appendChild(card);
       card.addEventListener("click", () => {
         AppManager.getInstance().router?.redirect(`exercices/${song.id}`);
       });
     }
+  }
+
+  private show_remove_modal(id: string, title: string): any {
+    const modal = new RemoveSongModal(id, title, () => window.location.reload());
   }
 }

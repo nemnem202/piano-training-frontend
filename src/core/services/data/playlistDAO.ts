@@ -94,6 +94,11 @@ export class PlaylistDAO {
     return await db.get("songs", id);
   }
 
+  public static async remove_song(id: string): Promise<void> {
+    const db = await PlaylistDAO.getDB();
+    return await db.delete("songs", id);
+  }
+
   public static async get_all_songs_of_a_playlist(playlist: Playlist): Promise<Song[]> {
     const songs = [];
     for (const id of playlist.songs) {
