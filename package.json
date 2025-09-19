@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "watch:wasm": "cd src/core/services/sound/rust-synth && cargo watch -w src -s \"wasm-pack build --target web --out-dir build\"",
+    "watch:wasm": "cd src/core/sound/rust-synth && cargo watch -w src -s \"wasm-pack build --target web --out-dir build\"",
     "dev": "concurrently \"npm run watch:wasm\" \"vite\"",
     "build": "tsc && vite build",
     "tauri:dev": "concurrently \"vite dev\" \"npx tauri dev\"",

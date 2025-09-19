@@ -1,4 +1,5 @@
 import { FloatingModule } from "../../../common/abstracts/base_floating_module";
+import { defaultOscillator } from "../../../common/settings/synth";
 import type { Bounds, ModuleDTO } from "../../../common/types/floating_module";
 import type { Oscillator, SynthConfig } from "../../../common/types/synth";
 import type { RadioItem, RadioItems } from "../../../common/types/ui";

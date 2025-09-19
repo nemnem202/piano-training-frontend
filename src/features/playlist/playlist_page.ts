@@ -1,12 +1,13 @@
 import { AppRunner } from "../../app/app_runner";
 import { Page } from "../../common/abstracts/base_page";
 import { available_notes } from "../../common/constants/available_notes";
+import { difficulties } from "../../common/settings/playlist";
 import type { Difficulty, Playlist, Song } from "../../common/types/playlist";
 import { PlaylistDAO } from "../../core/data_acess/playlist_indexedDB_dao";
 import { RemoveButton } from "../../ui_components/buttons/remove_button/removeButton";
 import { SearchBar } from "../../ui_components/forms/searchBar/searchBar";
 import { RemoveSongModal } from "../../ui_components/modals/removeSongModal/removeSongModal";
-import template from "./playlist.html?raw";
+import template from "./playlist_page.html?raw";
 
 export class PlaylistPage extends Page {
   private id: string | undefined;

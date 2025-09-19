@@ -13,6 +13,7 @@ import type {
 } from "../../common/types/playlist";
 import { available_notes } from "../../common/constants/available_notes";
 import { PlaylistDAO } from "../data_acess/playlist_indexedDB_dao";
+import { DEFAULT_EXERCICE_CONFIG } from "../../common/settings/defaultExercice";
 
 export class IrealDataMapper {
   static convertPlaylist(playlist: PlaylistIreal): Playlist {

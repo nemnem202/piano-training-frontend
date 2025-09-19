@@ -1,4 +1,5 @@
 import { Store } from "../../common/abstracts/base_store";
+import { initialExerciceStoreState } from "../../common/settings/initialExerciceStoreState";
 import type { noteDTO } from "../../common/types/app-config";
 import type { ExerciceStoreState } from "../../common/types/exercice";
 

@@ -1,5 +1,5 @@
-import { Page } from "../../core/contracts/page";
-import notFound from "./notFound.html?raw";
+import { Page } from "../../common/abstracts/base_page";
+import notFound from "./not_found_page.html?raw";
 
 export class NotFound extends Page {
   constructor() {

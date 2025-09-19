@@ -1,10 +1,11 @@
 import { AppRunner } from "../../app/app_runner";
 import { Page } from "../../common/abstracts/base_page";
+import { playlistTags } from "../../common/settings/playlist";
 import { PlaylistDAO } from "../../core/data_acess/playlist_indexedDB_dao";
 import { Spinner } from "../../ui_components/_base/spinner/spinner";
 import { NewPlaylistButton } from "../../ui_components/buttons/new_playlist/new_playlist";
 import { PlaylistPreviewCard } from "../../ui_components/forms/playlist-preview-card/playlist_preview_card";
-import home from "./home.html?raw";
+import home from "./home_page.html?raw";
 
 export class Home extends Page {
   constructor() {
