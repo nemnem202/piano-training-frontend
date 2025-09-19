@@ -1,0 +1,118 @@
+import { openDB, type IDBPDatabase } from "idb";
+import type { DBTypes } from "../../common/types/date.models";
+import type { Playlist, PlaylistTag, Song } from "../../common/types/playlist";
+import type { ExerciceConfigDTO } from "../../common/types/app-config";
+
+export class PlaylistDAO {
+  private static dbInstance: IDBPDatabase<DBTypes> | null = null;
+  private static version = 1;
+
+  private constructor() {}
+
+  private static async getDB(): Promise<IDBPDatabase<DBTypes>> {
+    if (!PlaylistDAO.dbInstance) {
+      PlaylistDAO.dbInstance = await openDB("piano-trainingDB", PlaylistDAO.version, {
+        upgrade(db) {
+          if (!db.objectStoreNames.contains("playlists")) {
+            db.createObjectStore("playlists");
+          }
+          if (!db.objectStoreNames.contains("songs")) {
+            db.createObjectStore("songs");
+          }
+        },
+      });
+    }
+    return PlaylistDAO.dbInstance;
+  }
+
+  public static async create_playlist(playlist: Playlist): Promise<string> {
+    const db = await PlaylistDAO.getDB();
+
+    return await db.add("playlists", playlist, playlist.Id);
+  }
+
+  public static async create_song(song: Song): Promise<string> {
+    const db = await PlaylistDAO.getDB();
+
+    return await db.add("songs", song, song.id);
+  }
+
+  public static async get_playlist(id: string): Promise<Playlist | undefined> {
+    const db = await PlaylistDAO.getDB();
+    return await db.get("playlists", id);
+  }
+
+  public static async remove_playlist(id: string): Promise<void> {
+    const db = await PlaylistDAO.getDB();
+
+    const [songs, playlist] = await Promise.all([db.getAll("songs"), this.get_playlist(id)]);
+
+    if (playlist) {
+      const removeSongs = songs
+        .filter((s) => playlist.songs.includes(s.id))
+        .map((s) => this.remove_song(s.id)); // <-- supprimer par song.id
+
+      // On supprime playlist et chansons en parallèle
+      await Promise.all([...removeSongs, db.delete("playlists", id)]);
+    } else {
+      await db.delete("playlists", id);
+    }
+  }
+
+  public static async get_all_with_tag(tag: PlaylistTag): Promise<Playlist[]> {
+    const db = await PlaylistDAO.getDB();
+    const playlists = await db.getAll("playlists");
+    return playlists.filter((p) => p.Tags.includes(tag));
+  }
+
+  public static async update_playlist(
+    playlist: Playlist
+  ): Promise<{ status: boolean; mssg: string }> {
+    const db = await this.getDB();
+    const transaction = db.transaction("playlists", "readwrite");
+    const store = transaction.objectStore("playlists");
+
+    const reqGet = await store.get(playlist.Id);
+
+    if (!reqGet) return { status: false, mssg: "Cannot get item from id" };
+
+    const updateReq = await store.put(playlist, playlist.Id);
+
+    if (updateReq) {
+      return { status: true, mssg: "Updated successfully" };
+    } else {
+      return { status: false, mssg: "An error occured while saving in the db" };
+    }
+  }
+
+  public static async update_exercice_config(ex: ExerciceConfigDTO, id: string) {
+    try {
+      const db = await this.getDB();
+      const transaction = db.transaction("songs", "readwrite");
+      const store = transaction.objectStore("songs");
+
+      const req_get = await store.get(id);
+
+      if (!req_get) {
+        console.error("song not found");
+        return;
+      }
+
+      req_get.exercice_config = ex;
+
+      const update_req = await store.put(req_get, id);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  public static async get_song(id: string): Promise<Song | undefined> {
+    const db = await PlaylistDAO.getDB();
+    return await db.get("songs", id);
+  }
+
+  public static async remove_song(id: string): Promise<void> {
+    const db = await PlaylistDAO.getDB();
+    return await db.delete("songs", id);
+  }
+}

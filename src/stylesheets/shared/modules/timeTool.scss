@@ -1,0 +1,6 @@
+@use "../../variables" as *;
+
+.time-tool-container {
+  display: flex;
+  padding: $padding 1;
+}

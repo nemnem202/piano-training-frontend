@@ -1,0 +1,350 @@
+import diff from "fast-diff";
+import type { CellIreal, ChordIreal, SongIreal } from "../../common/types/decoder";
+import { DEFAULT_BPM } from "../../common/types/app-config";
+
+type Diff = [-1 | 0 | 1, string];
+
+export class IrealChartDecoder {
+  title: string = "My new playlist";
+  songs: SongIreal[];
+
+  constructor(ireal: string) {
+    const playlistEncoded = /.*?(irealb(?:ook)?):\/\/([^"]*)/.exec(ireal);
+    this.songs = [];
+    if (!playlistEncoded) {
+      console.error("[ireal-musicxml] Invalid iReal Pro URL format");
+      return;
+    }
+
+    try {
+      const playlist = decodeURIComponent(playlistEncoded[2]);
+      const parts = playlist.split("===");
+      if (parts.length > 1) {
+        typeof parts.at(-1) === "string" && (this.title = parts.pop()!);
+      }
+
+      this.songs = parts
+        .map((part): SongIreal | null => {
+          try {
+            return new SongInterpreter(part, playlistEncoded[1] === "irealbook").getSong();
+          } catch (error) {
+            const errorParts = part.split("=");
+            const title = SongInterpreter.parseTitle(errorParts[0].trim());
+            console.error(`[ireal-musicxml] [${title}] ${error}`);
+            return null;
+          }
+        })
+        .filter((song): song is SongIreal => song !== null)
+        .reduce((songs: SongIreal[], song: SongIreal): SongIreal[] => {
+          if (songs.length > 0) {
+            const lastSong = songs[songs.length - 1];
+            const diffs: Diff[] = diff(lastSong.title, song.title);
+            if (
+              diffs.length > 0 &&
+              diffs[0][0] === 0 &&
+              diffs.every((d) => d[0] === 0 || /^\d+$/.test(d[1]))
+            ) {
+              lastSong.cells = lastSong.cells.concat(song.cells);
+              return songs;
+            }
+          }
+          songs.push(song);
+          return songs;
+        }, []);
+    } catch (err) {
+      window.alert(err);
+    }
+  }
+}
+
+export class SongInterpreter {
+  title: string;
+  composer: string;
+  style: string;
+  key: string;
+  transpose: number;
+  groove: string;
+  bpm: number;
+  repeats: number;
+  cells: CellIreal[];
+
+  static chordRegex: RegExp =
+    /^([A-G][b#]?)((?:sus|alt|add|[+\-^\dhob#])*)(\*.+?\*)*(\/[A-G][#b]?)?(\(.*?\))?/;
+  static chordRegex2: RegExp = /^([ Wp])()()(\/[A-G][#b]?)?(\(.*?\))?/;
+
+  static regExps: RegExp[] = [
+    /^\*[a-zA-Z]/,
+    /^T\d\d/,
+    /^N./,
+    /^<.*?>/,
+    SongInterpreter.chordRegex,
+    SongInterpreter.chordRegex2,
+  ];
+
+  constructor(ireal: string, oldFormat: boolean = false) {
+    this.cells = [];
+    // this.musicXml = "";
+    if (!ireal) {
+      this.title = "";
+      this.composer = "";
+      this.style = "";
+      this.key = "";
+      this.transpose = 0;
+      this.groove = "";
+      this.bpm = DEFAULT_BPM;
+      this.repeats = 0;
+      return;
+    }
+
+    const parts = ireal.split("=");
+    if (oldFormat) {
+      this.title = SongInterpreter.parseTitle(parts[0].trim());
+      this.composer = SongInterpreter.parseComposer(parts[1].trim());
+      this.style = parts[2].trim();
+      this.key = parts[3];
+      this.cells = this.parse(parts[5] || "");
+      this.transpose = 0;
+      this.groove = "default";
+      this.bpm = DEFAULT_BPM;
+      this.repeats = 3;
+    } else {
+      this.title = SongInterpreter.parseTitle(parts[0].trim());
+      this.composer = SongInterpreter.parseComposer(parts[1].trim());
+      this.style = parts[3].trim();
+      this.key = parts[4];
+      this.transpose = +parts[5] || 0;
+      this.groove = parts[7];
+      this.bpm = +parts[8] > 0 ? +parts[8] : DEFAULT_BPM;
+      this.repeats = +parts[9] || 3;
+      const music = parts[6].split("1r34LbKcu7");
+      this.cells = this.parse(unscramble(music[1] || ""));
+    }
+  }
+
+  getSong(): SongIreal {
+    return {
+      bpm: this.bpm,
+      cells: this.cells,
+      composer: this.composer,
+      groove: this.groove,
+      key: this.key,
+      repeats: this.repeats,
+      style: this.style,
+      title: this.title,
+      transpose: this.transpose,
+    };
+  }
+
+  parse(ireal: string): CellIreal[] {
+    let text = ireal.trim();
+    const arr: (string | RegExpExecArray)[] = [];
+
+    while (text) {
+      let found = false;
+      for (let i = 0; i < SongInterpreter.regExps.length; i++) {
+        const match = SongInterpreter.regExps[i].exec(text);
+        if (match) {
+          found = true;
+          if (match.length <= 2) {
+            arr.push(match[0]);
+          } else {
+            arr.push(match);
+          }
+          text = text.substring(match[0].length);
+          break;
+        }
+      }
+      if (!found) {
+        if (text[0] !== ",") {
+          arr.push(text[0]);
+        }
+        text = text.substring(1);
+      }
+    }
+
+    const cells: CellIreal[] = [];
+    let obj = this.newCell(cells);
+    let prevobj: CellIreal | null = null;
+    for (let i = 0; i < arr.length; i++) {
+      let cell: string | RegExpExecArray | null = arr[i];
+
+      if (Array.isArray(cell)) {
+        obj.chord = this.parseChord(cell);
+        cell = " ";
+      }
+
+      const cellStr = cell as string;
+
+      switch (cellStr[0]) {
+        case "{":
+        case "[":
+          if (prevobj) {
+            prevobj.bars += ")";
+            prevobj = null;
+          }
+          obj.bars = cellStr;
+          cell = null;
+          break;
+        case "|":
+          if (prevobj) {
+            prevobj.bars += ")";
+            prevobj = null;
+          }
+          obj.bars = "(";
+          cell = null;
+          break;
+        case "]":
+        case "}":
+        case "Z":
+          if (prevobj) {
+            prevobj.bars += cellStr;
+            prevobj = null;
+          }
+          cell = null;
+          break;
+        case "n":
+          obj.chord = new ChordDecoder(cellStr[0]).getChord();
+          break;
+        case ",":
+          cell = null;
+          break;
+        case "S":
+        case "T":
+        case "Q":
+        case "N":
+        case "U":
+        case "s":
+        case "l":
+        case "f":
+        case "*":
+          obj.annots.push(cellStr);
+          cell = null;
+          break;
+        case "Y":
+          obj.spacer++;
+          cell = null;
+          prevobj = null;
+          break;
+        case "r":
+        case "x":
+        case "W":
+          obj.chord = new ChordDecoder(cellStr).getChord();
+          break;
+        case "<":
+          obj.comments.push(cellStr.substring(1, cellStr.length - 1));
+          cell = null;
+          break;
+        default:
+      }
+      if (cell && i < arr.length - 1) {
+        prevobj = obj;
+        obj = this.newCell(cells);
+      }
+    }
+    return cells;
+  }
+
+  static parseTitle(title: string): string {
+    return title.replace(/(.*)(, )(A|The)$/g, "$3 $1");
+  }
+
+  static parseComposer(composer: string): string {
+    const parts = composer.split(/(\s+)/);
+    if (parts.length === 3) {
+      return parts[2] + parts[1] + parts[0];
+    }
+    return composer;
+  }
+
+  parseChord(chord: RegExpExecArray): ChordIreal | null {
+    const note = chord[1] || " ";
+    let modifiers = chord[2] || "";
+    const comment = chord[3] || "";
+    if (comment) {
+      modifiers += comment.substring(1, comment.length - 1);
+    }
+    let overStr = chord[4] || "";
+    if (overStr.startsWith("/")) {
+      overStr = overStr.substring(1);
+    }
+    const alternateStr = chord[5] || null;
+
+    let alternateChord: ChordIreal | null = null;
+    if (alternateStr) {
+      const alternateMatch = SongInterpreter.chordRegex.exec(
+        alternateStr.substring(1, alternateStr.length - 1)
+      );
+      alternateChord = alternateMatch ? this.parseChord(alternateMatch) : null;
+    }
+
+    if (note === " " && !alternateChord && !overStr) {
+      return null;
+    }
+
+    let overChord: ChordIreal | null = null;
+    if (overStr) {
+      const offset = overStr.length > 1 && (overStr[1] === "#" || overStr[1] === "b") ? 2 : 1;
+      overChord = new ChordDecoder(overStr.substring(0, offset), overStr.substring(offset));
+    }
+
+    return new ChordDecoder(note, modifiers, overChord, alternateChord);
+  }
+
+  newCell(cells: CellIreal[]): CellIreal {
+    const obj: CellIreal = { annots: [], bars: "", chord: null, comments: [], spacer: 0 };
+    cells.push(obj);
+    return obj;
+  }
+}
+
+function unscramble(s: string): string {
+  let r = "",
+    p: string;
+  while (s.length > 51) {
+    p = s.substring(0, 50);
+    s = s.substring(50);
+    r = r + obfusc50(p);
+  }
+  r = r + s;
+  r = r.replace(/Kcl/g, "| x").replace(/LZ/g, " |").replace(/XyQ/g, "   ");
+  return r;
+}
+
+function obfusc50(s: string): string {
+  const newString = s.split("");
+  for (let i = 0; i < 5; i++) {
+    [newString[i], newString[49 - i]] = [s[49 - i], s[i]];
+  }
+  for (let i = 10; i < 24; i++) {
+    [newString[i], newString[49 - i]] = [s[49 - i], s[i]];
+  }
+  return newString.join("");
+}
+
+export class ChordDecoder {
+  note: string;
+  modifiers: string;
+  over: ChordIreal | null;
+  alternate: ChordIreal | null;
+
+  constructor(
+    note: string,
+    modifiers: string = "",
+    over: ChordIreal | null = null,
+    alternate: ChordIreal | null = null
+  ) {
+    this.note = note;
+    this.modifiers = modifiers;
+    this.over = over;
+    this.alternate = alternate;
+  }
+
+  getChord(): ChordIreal {
+    return {
+      alternate: this.alternate,
+      modifiers: this.modifiers,
+      over: this.over,
+      note: this.note,
+    };
+  }
+}

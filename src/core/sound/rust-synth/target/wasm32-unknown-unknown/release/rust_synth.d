@@ -1,0 +1,1 @@
+C:\Users\Naïm\Documents\Code\piano-app\piano-training-frontend\src\core\services\sound\rust-synth\target\wasm32-unknown-unknown\release\rust_synth.wasm: C:\Users\Naïm\Documents\Code\piano-app\piano-training-frontend\src\core\services\sound\rust-synth\src\lib.rs
