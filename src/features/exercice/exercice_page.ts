@@ -79,7 +79,6 @@ export class Exercice extends Page {
       modules_DTO.push(mod[1].export_configuration());
     }
 
-    this.modules.forEach((m) => {});
     const config: ExerciceConfigDTO = {
       magnetism: this.magnetism,
       bpm: 120,

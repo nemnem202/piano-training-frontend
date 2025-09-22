@@ -7,8 +7,9 @@
     "watch:wasm": "cd src/core/sound/rust-synth && cargo watch -w src -s \"wasm-pack build --target web --out-dir build\"",
     "dev": "concurrently \"npm run watch:wasm\" \"vite\"",
     "build": "tsc && vite build",
-    "tauri:dev": "concurrently \"vite dev\" \"npx tauri dev\"",
-    "preview": "vite preview"
+    "build:wasm": "cd src/core/sound/rust-synth && wasm-pack build --release --target web --out-dir build",
+    "build:server_side": "npm run build:wasm && tsc && vite build",
+    "start": "npm run build:server_side"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.8.4",

@@ -38,4 +38,10 @@ export type ModuleDTO =
       params: {
         bounds: Bounds;
       };
+    }
+  | {
+      type: "ChordNames";
+      params: {
+        bounds: Bounds;
+      };
     };

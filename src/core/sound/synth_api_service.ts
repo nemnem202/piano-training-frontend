@@ -27,9 +27,13 @@ export class SynthApi {
     this.notes = [...storeNotes];
   };
 
-  static async playNote(note: noteDTO) {}
+  static async playNote(note: noteDTO) {
+    console.log(note);
+  }
 
-  static async stopNote(note: noteDTO) {}
+  static async stopNote(note: noteDTO) {
+    console.log(note);
+  }
 
   public destroy() {
     this.soundEngine.release();

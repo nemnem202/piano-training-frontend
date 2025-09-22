@@ -100,7 +100,7 @@ export class PlaylistDAO {
 
       req_get.exercice_config = ex;
 
-      const update_req = await store.put(req_get, id);
+      await store.put(req_get, id);
     } catch (err) {
       console.error(err);
     }

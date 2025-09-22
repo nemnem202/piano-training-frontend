@@ -1,7 +1,7 @@
-import { Component } from "../../../core/contracts/component";
-import type { CellDTO, SongDTO } from "../../../core/types/data";
 import template from "./template.html?raw";
 import "./style.css";
+import { Component } from "../../../common/abstracts/base_component";
+import type { CellIreal, SongIreal } from "../../../common/types/decoder";
 
 interface DisplayStrategy {
   enhance(element: HTMLElement): void; // seulement les ajouts/modifs
@@ -24,8 +24,8 @@ export class EditStrategy implements DisplayStrategy {
 
 export class IrealTypeDisplayer extends Component {
   private strategy: DisplayStrategy;
-  private song: SongDTO;
-  constructor(song: SongDTO, strat: DisplayStrategy) {
+  private song: SongIreal;
+  constructor(song: SongIreal, strat: DisplayStrategy) {
     super("div", template);
     this.strategy = strat;
     this.song = song;
@@ -54,7 +54,7 @@ export class IrealTypeDisplayer extends Component {
     });
   }
 
-  private formatCell(cell: CellDTO): HTMLDivElement {
+  private formatCell(cell: CellIreal): HTMLDivElement {
     const cellDiv = document.createElement("div");
     cellDiv.className = "cell-div";
     cellDiv.innerHTML = `

@@ -40,19 +40,19 @@ export const waveFormFunctions: Record<Waveform, (x: number) => number> = {
 
 export const filterOverviewFunctions: Record<FilterType, (filter: Filter, freq: number) => number> =
   {
-    "low-cut": (filter, freq) => {
+    "low-cut": () => {
       return 5;
     },
-    "high-cut": (filter, freq) => {
+    "high-cut": () => {
       return 10;
     },
-    bell: (filter, freq) => {
+    bell: () => {
       return 5;
     },
-    "high-shelf": (filter, freq) => {
+    "high-shelf": () => {
       return 8;
     },
-    "low-shelf": (filter, freq) => {
+    "low-shelf": () => {
       return 6;
     },
   };

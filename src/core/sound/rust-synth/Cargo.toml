@@ -13,6 +13,7 @@ wasm-bindgen = "0.2"
 
 
 [profile.release]
-opt-level = "z"   
-lto = true         
-codegen-units = 1
+opt-level = "z"   # "z" = optimisé pour la taille, "s" = petite taille aussi, "3" = vitesse max
+lto = true        # Link Time Optimization pour réduire la taille et améliorer la vitesse
+codegen-units = 1 # plus lent à compiler mais meilleur code final
+panic = 'abort'   # pour réduire le binaire, pas de stack unwinding

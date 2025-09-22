@@ -1,14 +1,10 @@
 // wasmWorker.ts
 import initRustSynth, { init_buffer, process_loop } from "./rust-synth/build/rust_synth.js";
 
-let wasmReady = false;
-let flag: Int32Array;
-
 const initModule = async () => {
   await initRustSynth();
   console.log("[RUST WORKER] Rust WASM ready in Worker!");
   self.postMessage({ type: "module_end_init" });
-  wasmReady = true;
 };
 
 initModule();
@@ -19,9 +15,6 @@ self.onmessage = (e: MessageEvent) => {
     const ringBufferSize = e.data.ringBufferSize;
 
     if (!(sharedBuffer instanceof SharedArrayBuffer) || typeof ringBufferSize !== "number") return;
-
-    const indexes = new Int32Array(sharedBuffer, 0, 3);
-    flag = indexes.subarray(0, 1);
 
     init_buffer(sharedBuffer, ringBufferSize);
 

@@ -6,7 +6,6 @@ class AudioWorkletManager extends AudioWorkletProcessor {
 
   private readIndex: Int32Array<any>;
   private writeIndex: Int32Array<any>;
-  private availableSamples = 0;
 
   private flag: Int32Array;
 
@@ -27,7 +26,7 @@ class AudioWorkletManager extends AudioWorkletProcessor {
     this.ringBuffer = new Float32Array(sharedBuffer, indexesBytes, this.ringBufferSize);
   }
 
-  process(inputs: any, outputs: any, parameters: any) {
+  process(outputs: any) {
     const output = outputs[0];
     const left = output[0];
     const right = output[1];

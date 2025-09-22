@@ -26,4 +26,6 @@ dist-ssr
 
 # Rust config
 
-src/core/services/sound/rust-synth/target/
+
+src/core/sound/rust-synth/build/*
+src/core/sound/rust-synth/target/*
